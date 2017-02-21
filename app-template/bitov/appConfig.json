@@ -1,0 +1,32 @@
+{
+  "packageName": "bitov",
+  "packageDescription": "Bitovation Bitcoin Wallet",
+  "userVisibleName": "Bitovation Wallet",
+  "purposeLine": "Bitovation Bitcoin Wallet",
+  "bundleName": "bitov",
+  "appUri": "bitov",
+  "name": "bitov",
+  "nameNoSpace": "bitovationwallet",
+  "nameCase": "Bitovation Wallet",
+  "nameCaseNoSpace": "BitovationWallet",
+  "gitHubRepoName": "copay",
+  "gitHubRepoUrl": "git://github.com/sdobz/copay.git",
+  "gitHubRepoBugs": "https://github.com/bitpay/copay/issues",
+  "disclaimerUrl": "https://copay.io/disclaimer",
+  "url": "https://bitovation.com",
+  "appDescription": "Bitovation Bitcoin Wallet",
+  "winAppName": "BitovationWallet",
+  "wpPublisherId": "{31cdd08b-457c-413d-b440-f6665eec847d}",
+  "wpProductId": "{5381aa50-9069-11e4-84cc-293caf9cbdc8}",
+  "windowsAppId": "804636ee-b017-4cad-8719-e58ac97ffa5c",
+  "pushSenderId": "1036948132229",
+  "description": "A Secure Bitcoin Wallet",
+  "version": "2.5.0",
+  "androidVersion": "115",
+  "_extraCSS": null,
+  "_enabledExtensions": {
+    "coinbase": true,
+    "glidera": true,
+    "amazon": true
+  }
+}

@@ -1,3 +1,6 @@
+# ide
+.idea
+
 # translation
 i18n/po/*.mo
 i18n/crowdin_api_key.txt
