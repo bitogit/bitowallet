@@ -148,6 +148,8 @@ module.exports = function(grunt) {
           'src/js/init.js',
           'src/js/trezor-url.js',
           'src/js/retailbenefits/copayRetailBenefits.js',
+          'src/js/retailbenefits/services/*.js',
+          'src/js/retailbenefits/controllers/**/*.js',
           'bower_components/trezor-connect/login.js',
           'node_modules/bezier-easing/dist/bezier-easing.min.js',
           'node_modules/cordova-plugin-qrscanner/dist/cordova-plugin-qrscanner-lib.min.js'

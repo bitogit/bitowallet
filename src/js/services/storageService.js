@@ -312,6 +312,18 @@ angular.module('copayApp.services')
       storage.remove('coinbaseToken-' + network, cb);
     };
 
+    root.setRetailBenefitsState = function(cb) {
+      storage.set('retailBenefitsState', cb);
+    };
+
+    root.getRetailBenefitsState = function(cb) {
+      storage.get('retailBenefitsState', cb);
+    };
+
+    root.removeRetailBenefitsState = function(cb) {
+      storage.remove('retailBenefitsState', cb);
+    };
+
     root.setAddressbook = function(network, addressbook, cb) {
       storage.set('addressbook-' + network, addressbook, cb);
     };
