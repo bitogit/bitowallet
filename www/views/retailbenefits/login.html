@@ -14,50 +14,34 @@
 
   <ion-content>
 
-    <form name="rb-login=form" no-validate>
-
-      <div class="list add-address-list add-address-input-group">
+    <form name="rbLoginForm">
+      <div class="list">
         <label class="item item-input item-stacked-label no-border">
-          <span class="input-label" translate>Name</span>
-          <input type="text"
-                 id="name"
-                 name="name"
-                 ng-model="addressbookEntry.name"
-                 required>
-        </label>
-        <label class="item item-input item-stacked-label">
           <span class="input-label" translate>Email</span>
-          <input type="text"
+          <input type="email"
                  id="email"
                  placeholder="{{'name@example.com' | translate}}"
                  name="email"
-                 ng-model="addressbookEntry.email">
+                 ng-model="loginCredentials.email"
+                 required>
         </label>
-        <div>
-          <label class="item item-input item-stacked-label">
-            <span class="input-label" translate>Bitcoin Address</span>
-            <div class="input-notification">
-              <i ng-show="!addressbookForm.address.$invalid" class="icon ion-checkmark-circled valid"></i>
-              <i ng-show="addressbookForm.address.$invalid && addressbookEntry.address" class="icon ion-close-circled invalid"></i>
-            </div>
-            <input type="text"
-                   id="address"
-                   name="address"
-                   ng-model="addressbookEntry.address"
-                   valid-address required>
-          </label>
-        </div>
+        <label class="item item-input item-stacked-label">
+          <span class="input-label" translate>Password</span>
+          <input type="password"
+                 id="password"
+                 name="password"
+                 ng-model="loginCredentials.password">
+        </label>
       </div>
 
       <div class="padding">
         <button type="submit"
                 class="button button-standard button-primary"
-                ng-click="add(addressbookEntry)"
-                ng-disabled="!addressbookForm.$valid" translate>
-          Save
+                ng-click="login(loginCredentials)"
+                ng-disabled="!rbLoginForm.$valid" translate>
+          Login
         </button>
       </div>
-
     </form>
   </ion-content>
 </ion-view>

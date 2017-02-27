@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('copayApp.services').factory('retailBenefitsService', function($http, $log, $window, platformInfo, storageService) {
+angular.module('copayApp.services').factory('retailBenefitsService', function($http, $log, $window, platformInfo, storageService, lodash) {
   /*
   State:
   - AuthResponse
@@ -48,7 +48,6 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
   var rbState = {
     authData: {},
     authState: 'init', // anonymous, loggingIn, authenticated, expired, refreshingAccessToken
-    authExpiresAt: null,
     userData: {}
   };
 
@@ -139,19 +138,23 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
   };
   */
 
-  var getAccessToken = function(cb) {
-    var now = new Date();
+  var accessTokenExpired = function () {
+    return 'created_at' in rbState.authData && 'expires_in' in rbState.authData &&
+            new Date((rbState.authData['created_at'] + rbState.authData['expires_in']) * 1000) < new Date()
+  };
 
+  var getAccessToken = function(cb) {
     if (rbState.authState == 'init') {
+      // TODO: make this happen before the rest of the code
       storageService.getRetailBenefitsState(function (err, storedRBState) {
         if (err) return cb(err);
         if (storedRBState != null) {
-          _.assign(rbState, storedRBState);
+          lodash.assign(rbState, storedRBState);
         }
       });
     }
 
-    if (rbState.authExpiresAt != null && rbState.authExpiresAt < now) {
+    if (accessTokenExpired()) {
       rbState.authState = 'expired';
       if ('refresh_token' in rbState.authData) {
         rbState.authState = 'refreshingAccessToken';
@@ -159,9 +162,10 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
           if (err) return cb(err);
           rbState.authData = data;
           rbState.authState = 'authenticated';
-          saveState();
-          $log.info("Refreshed and got:", data);
-          cb(null, rbState.authData['access_token']);
+          saveState(function (err) {
+            if (err) return cb(err);
+            cb(null, rbState.authData['access_token']);
+          });
         });
       }
     }
@@ -173,11 +177,16 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
     }
   };
 
+  root.hasCredentials = function () {
+    return 'HOST' in credentials && 'CLIENT_ID' in credentials && 'CLIENT_SECRET' in credentials;
+  };
+
   root.needLogin = function(cb) {
     $log.debug("Checking need login...");
 
     getAccessToken(function(err, token) {
       if (err || !token) {
+        $log.info("getAccessToken ERROR", err);
         cb(null, true);
       }
       else {
@@ -205,7 +214,12 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
 
     $http(req).then(function(data) {
       $log.info('RetailBenefits Authorization Access Token: SUCCESS');
-      return cb(null, data.data);
+      rbState.authState = 'authenticated';
+      rbState.authData = data.data;
+      saveState(function (err) {
+        if (err) return cb(err);
+        return cb(null, rbState.authState);
+      });
     }, function(data) {
       $log.error('RetailBenefits Authorization Access Token: ERROR ' + data.statusText);
       return cb('RetailBenefits Authorization Access Token: ERROR ' + data.statusText);
@@ -213,7 +227,15 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
   };
 
   root.getUserData = function (cb) {
-    cb("not implemented");
+    getAccessToken(function (err, token) {
+      if (err) return cb(err);
+      $http(_get('/account', token)).then(function(data) {
+        $log.info('RetailBenefits getUserData SUCCESS', data.data);
+      }, function(data) {
+        $log.error('RetailBenefits getUserData ERROR' + data.statusText);
+        return cb('RetailBenefits getUserData ERROR' + data.statusText);
+      });
+    });
   };
 
   setCredentials();

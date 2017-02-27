@@ -313,14 +313,11 @@ angular.module('copayApp.services')
     };
 
     root.setRetailBenefitsState = function(state, cb) {
-      storage.set('retailBenefitsState', JSON.stringify(state), cb);
+      storage.set('retailBenefitsState', state, cb);
     };
 
     root.getRetailBenefitsState = function(cb) {
-      storage.get('retailBenefitsState', function (err, data) {
-        if (err) return cb(err);
-        cb(err, JSON.parse(data));
-      });
+      storage.get('retailBenefitsState', cb);
     };
 
     root.removeRetailBenefitsState = function(cb) {
