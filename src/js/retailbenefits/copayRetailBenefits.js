@@ -5,16 +5,13 @@ var module = angular.module('copayAddon.retailBenefits', []);
 angular.module('copayAddon.retailBenefits')
   .config(function ($stateProvider) {
     $stateProvider
-      .state('rb.login', {
-        url: '/bit-login',
-        needProfile: true,
-        walletShouldBeComplete: true,
+      .state('tabs.bitovLogin', {
+        url: '/bitovationLogin',
         views: {
-          'login': {
+          'tab-home@tabs': {
             controller: 'rbLoginController',
             templateUrl: 'views/retailbenefits/login.html'
-          },
-          // info card
+          }
         }
       });
   })
@@ -23,7 +20,7 @@ angular.module('copayAddon.retailBenefits')
       title: 'Link Bitovation Account',
       name: 'linkbitovation',
       icon: 'icon-buy-bitcoin',
-      sref: 'rb.login',
+      sref: 'tabs.bitovLogin',
     });
     addonManager.registerAddon({});
   });

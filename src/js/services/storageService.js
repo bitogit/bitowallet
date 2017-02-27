@@ -271,12 +271,15 @@ angular.module('copayApp.services')
       storage.remove('coinbaseToken-' + network, cb);
     };
 
-    root.setRetailBenefitsState = function(cb) {
-      storage.set('retailBenefitsState', cb);
+    root.setRetailBenefitsState = function(state, cb) {
+      storage.set('retailBenefitsState', JSON.stringify(state), cb);
     };
 
     root.getRetailBenefitsState = function(cb) {
-      storage.get('retailBenefitsState', cb);
+      storage.get('retailBenefitsState', function (err, data) {
+        if (err) return cb(err);
+        cb(err, JSON.parse(data));
+      });
     };
 
     root.removeRetailBenefitsState = function(cb) {

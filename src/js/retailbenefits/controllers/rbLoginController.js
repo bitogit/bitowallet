@@ -1,11 +1,16 @@
 'use strict';
 
 angular.module('copayApp.controllers').controller('rbLoginController', function($scope, $ionicHistory, retailBenefitsService, lodash) {
-  $scope.$on("$ionicView.beforeEnter", function(event, data) {
-    $scope.service = retailBenefitsService.get();
+  console.log("IN CONTROLLER");
 
-    if (lodash.isEmpty($scope.service)) // or logged in
+  $scope.$on("$ionicView.beforeEnter", function(event, data) {
+    console.log("HIT THE PLACE");
+
+    if (lodash.isEmpty($scope.service)) {
       $ionicHistory.goBack();
+    }
+
+    retailBenefitsService.init();
 
     // loading
     // get udat cb(resp, err):
