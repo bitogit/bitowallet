@@ -1,10 +1,6 @@
 'use strict';
 
 angular.module('copayApp.services').factory('retailBenefitsService', function($http, $log, $window, platformInfo, storageService) {
-  var root = {};
-  var credentials = {};
-  var isWindowsPhoneApp = platformInfo.isWP && platformInfo.isCordova;
-
   /*
   State:
   - AuthResponse
@@ -17,7 +13,7 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
     - Pending Bitcoin Credit
     - Total Bitcoin Credit
 
-  States:
+  Auth States:
   - Anonymous
   - LoggingIn
   - Authenticated
@@ -47,6 +43,19 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
 
   */
 
+  var root = {};
+  var credentials = {};
+  var rbState = {
+    authData: {},
+    authState: 'init', // anonymous, loggingIn, authenticated, expired, refreshingAccessToken
+    authExpiresAt: null,
+    userData: {}
+  };
+
+  var saveState = function(cb) {
+    storageService.setRetailBenefitsState(rbState, cb);
+  };
+
   var setCredentials = function() {
     if (!$window.externalServices || !$window.externalServices.retailbenefits) {
       return;
@@ -59,30 +68,24 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
     credentials.CLIENT_SECRET = rb.client_secret;
   };
 
-  root.getAuthURL = function() {
+  var getAuthURL = function() {
     return credentials.HOST + '/v3/oauth/token';
   };
 
-  root.removeToken = function(cb) {
-    storageService.removeRetailBenefitsToken(function() {
-      return cb();
-    });
-  };
 
-  root.getToken = function(username, password, cb) {
+  var refreshForAuthState = function(refreshToken, cb) {
     var req = {
       method: 'POST',
-      url: root.getAuthURL(),
+      url: getAuthURL(),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
       data: {
-        grant_type: 'password',
+        grant_type: 'refresh_token',
         client_id: credentials.CLIENT_ID,
         client_secret: credentials.CLIENT_SECRET,
-        username: username,
-        password: password
+        refresh_token: refreshToken
       }
     };
 
@@ -106,19 +109,6 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
       }
     };
   };
-
-  root.getAccessToken = function(token, cb) {
-    if (!token) return cb('Invalid Token');
-    $http(_get('/oauth/token', token)).then(function(data) {
-      $log.info('Glidera Access Token Permissions: SUCCESS');
-      return cb(null, data.data);
-    }, function(data) {
-      $log.error('Glidera Access Token Permissions: ERROR ' + data.statusText);
-      return cb('Glidera Access Token Permissions: ERROR ' + data.statusText);
-    });
-  };
-
-
 
   var _post = function(endpoint, token, data) {
     return {
@@ -149,57 +139,83 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
   };
   */
 
-  root.init = function(accessToken, cb) {
-    $log.debug('Init Retail Benefits...');
+  var getAccessToken = function(cb) {
+    var now = new Date();
 
-    var rb = {
-      token: null
-    };
+    if (rbState.authState == 'init') {
+      storageService.getRetailBenefitsState(function (err, storedRBState) {
+        if (err) return cb(err);
+        if (storedRBState != null) {
+          _.assign(rbState, storedRBState);
+        }
+      });
+    }
 
-    var getToken = function(cb) {
-      if (accessToken) {
-        cb(null, accessToken);
-      } else {
-        storageService.getRetailBenefitsToken(cb);
-      }
-    };
-
-    getToken(function(err, accessToken) {
-      if (err || !accessToken) return cb();
-      else {
-        root.getAccessToken(accessToken, function(err, p) {
-          if (err) {
-            return cb(err);
-          } else {
-            glidera.token = accessToken;
-            glidera.permissions = p;
-            return cb(null, glidera);
-          }
+    if (rbState.authExpiresAt != null && rbState.authExpiresAt < now) {
+      rbState.authState = 'expired';
+      if ('refresh_token' in rbState.authData) {
+        rbState.authState = 'refreshingAccessToken';
+        refreshForAuthState(rbState.authData['refresh_token'], function (err, data) {
+          if (err) return cb(err);
+          rbState.authData = data;
+          rbState.authState = 'authenticated';
+          saveState();
+          $log.info("Refreshed and got:", data);
+          cb(null, rbState.authData['access_token']);
         });
       }
+    }
+    else if ('access_token' in rbState) {
+      cb(null, rbState.authData['access_token']);
+    }
+    else {
+      cb(rbState.authState);
+    }
+  };
+
+  root.needLogin = function(cb) {
+    $log.debug("Checking need login...");
+
+    getAccessToken(function(err, token) {
+      if (err || !token) {
+        cb(null, true);
+      }
+      else {
+        cb(null, false);
+      }
+    })
+  };
+
+  root.login = function(username, password, cb) {
+    var req = {
+      method: 'POST',
+      url: getAuthURL(),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      data: {
+        grant_type: 'password',
+        client_id: credentials.CLIENT_ID,
+        client_secret: credentials.CLIENT_SECRET,
+        username: username,
+        password: password
+      }
+    };
+
+    $http(req).then(function(data) {
+      $log.info('RetailBenefits Authorization Access Token: SUCCESS');
+      return cb(null, data.data);
+    }, function(data) {
+      $log.error('RetailBenefits Authorization Access Token: ERROR ' + data.statusText);
+      return cb('RetailBenefits Authorization Access Token: ERROR ' + data.statusText);
     });
   };
 
-
-  var register = function() {
-    if (isWindowsPhoneApp) return;
-
-    storageService.getGlideraToken(credentials.NETWORK, function(err, token) {
-      if (err) return cb(err);
-
-      buyAndSellService.register({
-        name: 'glidera',
-        logo: 'img/glidera-logo.png',
-        location: 'US Only',
-        sref: 'tabs.buyandsell.glidera',
-        configSref: 'tabs.preferences.glidera',
-        linked: !!token,
-      });
-    });
+  root.getUserData = function (cb) {
+    cb("not implemented");
   };
 
   setCredentials();
-  register();
   return root;
 });
-
