@@ -143,7 +143,7 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
             new Date((rbState.authData['created_at'] + rbState.authData['expires_in']) * 1000) < new Date()
   };
 
-  var getAccessToken = function(cb) {
+  var loadStoredStateThen = function(cb) {
     if (rbState.authState == 'init') {
       // TODO: make this happen before the rest of the code
       storageService.getRetailBenefitsState(function (err, storedRBState) {
@@ -151,30 +151,38 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
         if (storedRBState != null) {
           lodash.assign(rbState, storedRBState);
         }
+        cb();
       });
     }
-
-    if (accessTokenExpired()) {
-      rbState.authState = 'expired';
-      if ('refresh_token' in rbState.authData) {
-        rbState.authState = 'refreshingAccessToken';
-        refreshForAuthState(rbState.authData['refresh_token'], function (err, data) {
-          if (err) return cb(err);
-          rbState.authData = data;
-          rbState.authState = 'authenticated';
-          saveState(function (err) {
-            if (err) return cb(err);
-            cb(null, rbState.authData['access_token']);
-          });
-        });
-      }
-    }
-    else if ('access_token' in rbState) {
-      cb(null, rbState.authData['access_token']);
-    }
     else {
-      cb(rbState.authState);
+      cb();
     }
+  };
+
+  var getAccessToken = function(cb) {
+    loadStoredStateThen(function() {
+      if (accessTokenExpired()) {
+        rbState.authState = 'expired';
+        if ('refresh_token' in rbState.authData) {
+          rbState.authState = 'refreshingAccessToken';
+          refreshForAuthState(rbState.authData['refresh_token'], function (err, data) {
+            if (err) return cb(err);
+            rbState.authData = data;
+            rbState.authState = 'authenticated';
+            saveState(function (err) {
+              if (err) return cb(err);
+              cb(null, rbState.authData['access_token']);
+            });
+          });
+        }
+      }
+      else if ('access_token' in rbState.authData) {
+        cb(null, rbState.authData['access_token']);
+      }
+      else {
+        cb(rbState.authState);
+      }
+    });
   };
 
   root.hasCredentials = function () {
@@ -182,11 +190,8 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
   };
 
   root.needLogin = function(cb) {
-    $log.debug("Checking need login...");
-
     getAccessToken(function(err, token) {
       if (err || !token) {
-        $log.info("getAccessToken ERROR", err);
         cb(null, true);
       }
       else {

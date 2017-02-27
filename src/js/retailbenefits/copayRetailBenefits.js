@@ -19,7 +19,6 @@ angular.module('copayAddon.retailBenefits')
     if (retailBenefitsService.hasCredentials()) {
       retailBenefitsService.needLogin(function (err, needLogin) {
         if (needLogin) {
-          $log.info("NEED LOGIN");
           nextStepsService.register({
             title: 'Link Bitovation Account',
             name: 'linkbitovation',
@@ -28,7 +27,6 @@ angular.module('copayAddon.retailBenefits')
           });
         }
         else {
-          $log.info("HAVE LOGIN");
           retailBenefitsService.getUserData(function (err, userData) {
             if (err) {
               $log.error(err);
