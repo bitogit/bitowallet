@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('copayApp.controllers').controller('tabHomeController',
-  function($rootScope, $timeout, $scope, $state, $stateParams, $ionicModal, $ionicScrollDelegate, $window, gettextCatalog, lodash, popupService, ongoingProcess, externalLinkService, latestReleaseService, profileService, walletService, configService, $log, platformInfo, storageService, txpModalService, appConfigService, startupService, addressbookService, feedbackService, bwcError, nextStepsService, buyAndSellService, homeIntegrationsService, bitpayCardService) {
+  function($rootScope, $timeout, $scope, $state, $stateParams, $ionicModal, $ionicScrollDelegate, $window, gettextCatalog, lodash, popupService, ongoingProcess, externalLinkService, latestReleaseService, profileService, walletService, configService, $log, platformInfo, storageService, txpModalService, appConfigService, startupService, addressbookService, feedbackService, bwcError, nextStepsService, buyAndSellService, homeIntegrationsService, bitpayCardService, retailBenefitsService) {
     var wallet;
     var listeners = [];
     var notifications = [];
@@ -103,6 +103,19 @@ angular.module('copayApp.controllers').controller('tabHomeController',
 
       bitpayCardService.get({}, function(err, cards) {
         $scope.bitpayCardItems = cards;
+      });
+
+      $scope.rbUserData = {};
+      $scope.rbUserDataLoaded = function() {
+        return 'id' in $scope.rbUserData;
+      };
+      retailBenefitsService.getUserData(function(err, userData) {
+        if (err) {
+          $log.error("Retail benefits error:", err);
+          return;
+        }
+        $scope.rbUserData = userData;
+        $log.info(userData);
       });
 
       configService.whenAvailable(function() {

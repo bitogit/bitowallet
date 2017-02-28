@@ -122,22 +122,6 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
     };
   };
 
-  /*
-  root.sellPrice = function(token, price, cb) {
-    var data = {
-      qty: price.qty,
-      fiat: price.fiat
-    };
-    $http(_post('/prices/sell', token, null, data)).then(function(data) {
-      $log.info('Glidera Sell Price: SUCCESS');
-      return cb(null, data.data);
-    }, function(data) {
-      $log.error('Glidera Sell Price: ERROR ' + data.statusText);
-      return cb('Glidera Sell Price: ERROR ' + data.statusText);
-    });
-  };
-  */
-
   var accessTokenExpired = function () {
     return 'created_at' in rbState.authData && 'expires_in' in rbState.authData &&
             new Date((rbState.authData['created_at'] + rbState.authData['expires_in']) * 1000) < new Date()
@@ -145,7 +129,6 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
 
   var loadStoredStateThen = function(cb) {
     if (rbState.authState == 'init') {
-      // TODO: make this happen before the rest of the code
       storageService.getRetailBenefitsState(function (err, storedRBState) {
         if (err) return cb(err);
         if (storedRBState != null) {
@@ -160,7 +143,8 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
   };
 
   var getAccessToken = function(cb) {
-    loadStoredStateThen(function() {
+    loadStoredStateThen(function(err) {
+      if (err) return cb(err);
       if (accessTokenExpired()) {
         rbState.authState = 'expired';
         if ('refresh_token' in rbState.authData) {
@@ -232,10 +216,19 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
   };
 
   root.getUserData = function (cb) {
+    // CB called multiple times, once with cached, once with updated
+    cb(null, rbState.userData);
     getAccessToken(function (err, token) {
       if (err) return cb(err);
       $http(_get('/account', token)).then(function(data) {
-        $log.info('RetailBenefits getUserData SUCCESS', data.data);
+        if (!data.data || data.data.length < 1) {
+          return cb("Incorrect user data returned");
+        }
+        rbState.userData = data.data[0];
+        saveState(function (err) {
+          if (err) return cb(err);
+          cb(err, rbState.userData);
+        });
       }, function(data) {
         $log.error('RetailBenefits getUserData ERROR' + data.statusText);
         return cb('RetailBenefits getUserData ERROR' + data.statusText);

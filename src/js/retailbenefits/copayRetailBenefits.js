@@ -26,16 +26,6 @@ angular.module('copayAddon.retailBenefits')
             sref: 'tabs.bitovLogin'
           });
         }
-        else {
-          retailBenefitsService.getUserData(function (err, userData) {
-            if (err) {
-              $log.error(err);
-            }
-            else {
-              $log.info("USERDATA!", userData);
-            }
-          })
-        }
       });
     }
   });

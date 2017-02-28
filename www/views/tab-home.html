@@ -91,7 +91,7 @@
           </span>
           <span ng-if="wallet.isComplete()">
             <span ng-if="!wallet.balanceHidden"> {{wallet.status.totalBalanceStr ? wallet.status.totalBalanceStr : ( wallet.cachedBalance ? wallet.cachedBalance   + (wallet.cachedBalanceUpdatedOn ? ' &middot; ' + ( wallet.cachedBalanceUpdatedOn  * 1000 | amTimeAgo) : '') : ''  ) }} </span>
-            
+
             <span ng-if="wallet.balanceHidden" translate>[Balance Hidden]</span>
             <span class="tab-home__wallet__multisig-number" ng-if="wallet.n > 1">
               {{wallet.m}}-of-{{wallet.n}}
@@ -105,6 +105,19 @@
         </a>
       </div>
     </div>
+
+    <div class="list card" ng-if="rbUserDataLoaded()">
+      <div class="item item-icon-right item-heading">
+        <span translate>Bitovation Shop</span>
+      </div>
+      <div>
+        {{rbUserData.email}} -
+        Total: {{rbUserData.cashback.total}}
+        Pending: {{rbUserData.cashback.pending}}
+        Paid: {{rbUserData.cashback.paid}}
+      </div>
+    </div>
+
     <div class="ng-hide" ng-show="wallets[0] && bitpayCardItems.length>0" ng-include="'views/includes/bitpayCardsCard.html'"></div>
     <div class="ng-hide" ng-show="wallets[0] && buyAndSellItems.length>0" ng-include="'views/includes/buyAndSellCard.html'"></div>
     <div class="ng-hide" ng-show="homeIntegrations.length>0" ng-include="'views/includes/homeIntegrations.html'"></div>
