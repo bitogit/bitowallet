@@ -22,7 +22,7 @@ angular.module('copayAddon.retailBenefits')
           nextStepsService.register({
             title: 'Link Bitovation Account',
             name: 'linkbitovation',
-            icon: 'icon-buy-bitcoin',
+            icon: 'icon-bitov',
             sref: 'tabs.bitovLogin'
           });
         }

@@ -3,6 +3,9 @@
   .icon-create-wallet {
     background-color: #4A90E2; // default wallet color
   }
+  .icon-bitov {
+    background-image: url("../img/icon-bitov.png");
+  }
   .icon-buy-bitcoin {
     background-image: url("../img/icon-bitcoin.svg");
   }
@@ -101,9 +104,9 @@
   }
   .tab-home {
     &__logo {
-      height: 18px;
+      height: 30px;
       position: relative;
-      top: 3px;
+      top: 6px;
     }
     &__wallet {
       &__multisig-number {
