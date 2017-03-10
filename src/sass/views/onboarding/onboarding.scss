@@ -1,13 +1,7 @@
 .onboarding {
-<<<<<<< HEAD
-  background: #1e3186;
-  color: #fff;
-  background-image: linear-gradient(to bottom, #446b8c 0%, #294256 100%);
-=======
   background: $v-onboarding-gradient-top-color;
   color: $v-onboarding-color;
   background-image: linear-gradient(to bottom, $v-onboarding-gradient-top-color 0%, $v-onboarding-gradient-bottom-color 100%);
->>>>>>> upstream/master
   height: 100%;
   text-align: center;
   .bar.bar-header {
