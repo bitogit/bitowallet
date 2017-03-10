@@ -12,22 +12,6 @@ angular.module('copayApp.controllers').controller('rbLoginController', function(
         $ionicHistory.goBack();
       }
     });
-
-    // loading
-    // get udat cb(resp, err):
-    //    resp -> show udat
-    //    err -> show form
-    // submit:
-    //   link user account cb(resp, err):
-    //     err -> show err
-    //     resp -> get udat cb(resp, err):
-    //        err -> show form
-    //        resp -> show form
-
-    // rb card controller
-    // get udat cb(resp, err):
-    //   err -> hide
-    //   resp -> show udat
   });
 
   $scope.login = function(loginCredentials) {
@@ -37,9 +21,8 @@ angular.module('copayApp.controllers').controller('rbLoginController', function(
         popupService.showAlert(gettextCatalog.getString('Error'), err);
       }
       else {
-        popupService.showAlert("Bitovation", "Login success!", function() {
-          $ionicHistory.goBack();
-        });
+        $ionicHistory.goBack();
+        retailBenefitsService.clearNextStep();
       }
     });
   };

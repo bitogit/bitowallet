@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('copayApp.services').factory('retailBenefitsService', function($http, $log, $window, platformInfo, storageService, lodash) {
+angular.module('copayApp.services').factory('retailBenefitsService', function($http, $log, $window, platformInfo, storageService, lodash, nextStepsService) {
   /*
   State:
   - AuthResponse
@@ -234,6 +234,23 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
         return cb('RetailBenefits getUserData ERROR' + data.statusText);
       });
     });
+  };
+
+  root.registerNextStep = function() {
+    nextStepsService.register({
+      title: 'Link Bitovation Account',
+      name: 'linkbitovation',
+      icon: 'icon-bitov',
+      sref: 'tabs.bitovLogin'
+    });
+  };
+
+  root.clearNextStep = function() {
+    nextStepsService.unregister('linkbitovation');
+  };
+
+  root.logout = function(cb) {
+    storageService.removeRetailBenefitsState(cb);
   };
 
   setCredentials();

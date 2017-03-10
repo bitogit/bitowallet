@@ -115,8 +115,14 @@ angular.module('copayApp.controllers').controller('tabHomeController',
           return;
         }
         $scope.rbUserData = userData;
-        $log.info(userData);
       });
+
+      $scope.logoutRB = function() {
+        retailBenefitsService.logout(function() {
+          $scope.rbUserData = {};
+          retailBenefitsService.registerNextStep();
+        });
+      };
 
       configService.whenAvailable(function() {
         var config = configService.getSync();

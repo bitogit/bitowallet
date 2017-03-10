@@ -1,11 +1,11 @@
 #starting {
-  background: rgba(30, 49, 134, 1);
-  background: -moz-linear-gradient(top, rgba(30, 49, 134, 1) 0%, rgba(17, 27, 73, 1) 100%);
-  background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(30, 49, 134, 1)), color-stop(100%, rgba(17, 27, 73, 1)));
-  background: -webkit-linear-gradient(top, rgba(30, 49, 134, 1) 0%, rgba(17, 27, 73, 1) 100%);
-  background: -o-linear-gradient(top, rgba(30, 49, 134, 1) 0%, rgba(17, 27, 73, 1) 100%);
-  background: -ms-linear-gradient(top, rgba(30, 49, 134, 1) 0%, rgba(17, 27, 73, 1) 100%);
-  background: linear-gradient(to bottom, rgba(30, 49, 134, 1) 0%, rgba(17, 27, 73, 1) 100%);
+  background: #446B8C;
+  background: -moz-linear-gradient(top, #446B8C 0%, #294256 100%);
+  background: -webkit-gradient(left top, left bottom, color-stop(0%, #446B8C), color-stop(100%, #294256));
+  background: -webkit-linear-gradient(top, #446B8C 0%, #294256 100%);
+  background: -o-linear-gradient(top, #446B8C 0%, #294256 100%);
+  background: -ms-linear-gradient(top, #446B8C 0%, #294256 100%);
+  background: linear-gradient(to bottom, #446B8C 0%, #294256 100%);
   color: #fff;
   height: 100%;
   .scroll-content {

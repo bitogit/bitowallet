@@ -15,16 +15,11 @@ angular.module('copayAddon.retailBenefits')
         }
       });
   })
-  .run(function (nextStepsService, retailBenefitsService, $log) {
+  .run(function (retailBenefitsService, $log) {
     if (retailBenefitsService.hasCredentials()) {
       retailBenefitsService.needLogin(function (err, needLogin) {
         if (needLogin) {
-          nextStepsService.register({
-            title: 'Link Bitovation Account',
-            name: 'linkbitovation',
-            icon: 'icon-bitov',
-            sref: 'tabs.bitovLogin'
-          });
+          retailBenefitsService.registerNextStep();
         }
       });
     }
