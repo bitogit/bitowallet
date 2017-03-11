@@ -320,7 +320,12 @@ angular.module('copayApp.services')
       storage.get('retailBenefitsState', function (err, data) {
         if (err) return cb(err);
         if (lodash.isString(data)) {
-          data = JSON.parse(data);
+          try {
+            data = JSON.parse(data);
+          }
+          catch (e) {
+            cb(e);
+          }
         }
         cb(err, data);
       });

@@ -107,10 +107,10 @@ angular.module('copayApp.controllers').controller('tabHomeController',
 
       $scope.rbUserData = {};
       $scope.rbUserDataLoaded = function() {
-        return 'id' in $scope.rbUserData;
+        return $scope.rbUserData && 'id' in $scope.rbUserData;
       };
       retailBenefitsService.getUserData(function(err, userData) {
-        if (err) {
+        if (err && err != 'init') {
           $log.error("Retail benefits error:", err);
           return;
         }
@@ -118,9 +118,13 @@ angular.module('copayApp.controllers').controller('tabHomeController',
       });
 
       $scope.logoutRB = function() {
-        retailBenefitsService.logout(function() {
-          $scope.rbUserData = {};
-          retailBenefitsService.registerNextStep();
+        popupService.showConfirm("Confirm Logout", "Are you sure?", "Logout", "Cancel", function (ok) {
+          if (ok) {
+            retailBenefitsService.logout(function() {
+              $scope.rbUserData = {};
+              retailBenefitsService.registerNextStep();
+            });
+          }
         });
       };
 
