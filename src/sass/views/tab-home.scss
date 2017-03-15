@@ -57,6 +57,26 @@
       }
     }
   }
+  .rb-card-table {
+    font-size: 16px;
+    width: 100%;
+    text-align: center;
+    td {
+    }
+  }
+  .rb-credits {
+    td {
+      padding: 14px 0 6px 0;
+    }
+  }
+  .rb-titles {
+    font-size: 14px;
+    font-family: $v-font-family-light;
+    text-transform: uppercase;
+    td {
+      padding: 10px;
+    }
+  }
   .logout-button {
     width: 20px;
     height: 20px;
