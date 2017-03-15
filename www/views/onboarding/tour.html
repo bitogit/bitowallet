@@ -10,41 +10,60 @@
   <ion-slides class="slides" options="options" slider="data.slider">
     <ion-slide-page>
       <ion-content id="onboard-tour-secure" scroll="false">
-        <div class="onboarding-topic" translate>Bitcoin is secure,<br/>digital money.</div>
-        <div class="onboarding-description" translate>You can spend bitcoin at millions of websites and stores worldwide.</div>
-        <div class="onboarding-illustration-secure"></div>
+        <div class="onboarding-topic" translate>Create an Account</div>
+        <div class="onboarding-icon"><img src="img/onboarding-clock.png" /></div>
+        <div class="onboarding-description" translate>
+          Getting started is simple,<br/>
+          just create an account with<br/>
+          us and link it to your wallet!
+        </div>
         <div class="cta-buttons">
-          <div class="onboarding-tldr" translate>Just scan the code to pay.</div>
-          <button class="button button-standard button-secondary" ng-click="slideNext()" translate>
-            Got it
+          <button class="button button-standard button-primary" ng-click="slideNext()" translate>
+            Got it!
           </button>
         </div>
       </ion-content>
     </ion-slide-page>
     <ion-slide-page>
       <ion-content id="onboard-tour-currency" scroll="false">
-        <div class="onboarding-topic" translate>Bitcoin is a currency.</div>
-        <div class="onboarding-description" translate>You can trade it for other currencies like US Dollars, Euros, or Pounds.</div>
-        <div class="onboarding-illustration-currency">
-          <div id="onboarding-illustration-currency-exchange-rate">1 BTC = {{localCurrencySymbol}}{{localCurrencyPerBtc}}</div>
+        <div class="onboarding-topic" translate>Shop for Deals</div>
+        <div class="onboarding-icon"><img src="img/onboarding-happybucket.png" /></div>
+        <div class="onboarding-description" translate>
+          Use our shopping portal and mobile<br/>
+          App to check out all participating<br/>
+          merchants and the best deals, all<br/>
+          in once place
+        </div>
+        <div class="onboarding-description" translate>
+          OR
+        </div>
+        <div class="onboarding-description" translate>
+          Download out Shopping Assistant<br/>
+          browser plug-in to get notifications<br/>
+          when you're on a participating<br/>
+          store's site
         </div>
         <div class="cta-buttons">
-          <div class="onboarding-tldr" translate>The exchange rate changes with the market.</div>
-          <button class="button button-standard button-secondary" ng-click="slideNext()" translate>
-            Makes sense
+          <button class="button button-standard button-primary" ng-click="slideNext()" translate>
+            What happens next?
           </button>
         </div>
       </ion-content>
     </ion-slide-page>
     <ion-slide-page>
       <ion-content id="onboard-tour-control" scroll="false">
-        <div class="onboarding-topic" translate>You control your bitcoin.</div>
-        <div class="onboarding-description" translate>This app stores your bitcoin with cutting-edge security.</div>
-        <div class="onboarding-illustration-control"></div>
+        <div class="onboarding-topic" translate>Relax and Get Paid</div>
+        <div class="onboarding-icon"><img src="img/onboarding-bitcoin.png" /></div>
+        <div class="onboarding-description" translate>
+          <ul>
+            <li>The store confirms your purchase</li>
+            <li>We reward you Bit Credit as a<br/>thank you for using our service</li>
+            <li>Once you hit the required number<br/>of Bit Credits, we transfer it right<br/>to your wallet as Bitcoin!</li>
+          </ul>
+        </div>
         <div class="cta-buttons">
-          <div class="onboarding-tldr" translate>Not even BitPay can access it.</div>
           <button class="button button-standard button-primary" ng-click="createDefaultWallet()" translate>
-            Create bitcoin wallet
+            Great, let's get started!
           </button>
         </div>
       </ion-content>
