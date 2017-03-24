@@ -1,6 +1,7 @@
 {
   "packageName": "bitov",
   "packageDescription": "Bitovation Bitcoin Wallet",
+  "packageNameId": "com.bitovation.wallet",
   "userVisibleName": "Bitovation Wallet",
   "purposeLine": "Bitovation Bitcoin Wallet",
   "bundleName": "bitov",
@@ -21,12 +22,13 @@
   "windowsAppId": "804636ee-b017-4cad-8719-e58ac97ffa5c",
   "pushSenderId": "1036948132229",
   "description": "A Secure Bitcoin Wallet",
-  "version": "2.5.0",
-  "androidVersion": "115",
+  "version": "3.0.6",
+  "androidVersion": "306000",
   "_extraCSS": null,
   "_enabledExtensions": {
     "coinbase": true,
     "glidera": true,
+    "debitcard": true,
     "amazon": true
   }
 }

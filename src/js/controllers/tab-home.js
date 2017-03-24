@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('copayApp.controllers').controller('tabHomeController',
-  function($rootScope, $timeout, $scope, $state, $stateParams, $ionicModal, $ionicScrollDelegate, $window, gettextCatalog, lodash, popupService, ongoingProcess, externalLinkService, latestReleaseService, profileService, walletService, configService, $log, platformInfo, storageService, txpModalService, appConfigService, startupService, addressbookService, feedbackService, bwcError, nextStepsService, buyAndSellService, homeIntegrationsService, bitpayCardService, retailBenefitsService) {
+  function($rootScope, $timeout, $scope, $state, $stateParams, $ionicModal, $ionicScrollDelegate, $window, gettextCatalog, lodash, popupService, ongoingProcess, externalLinkService, latestReleaseService, profileService, walletService, configService, $log, platformInfo, storageService, txpModalService, appConfigService, startupService, addressbookService, feedbackService, bwcError, nextStepsService, buyAndSellService, homeIntegrationsService, bitpayCardService, pushNotificationsService, retailBenefitsService) {
     var wallet;
     var listeners = [];
     var notifications = [];
@@ -128,8 +128,7 @@ angular.module('copayApp.controllers').controller('tabHomeController',
         });
       };
 
-      configService.whenAvailable(function() {
-        var config = configService.getSync();
+      configService.whenAvailable(function(config) {
         $scope.recentTransactionsEnabled = config.recentTransactions.enabled;
         if ($scope.recentTransactionsEnabled) getNotifications();
 
@@ -138,6 +137,8 @@ angular.module('copayApp.controllers').controller('tabHomeController',
         } else {
           $scope.nextStepsItems = nextStepsService.get();
         }
+
+        pushNotificationsService.init();
 
         $timeout(function() {
           $ionicScrollDelegate.resize();

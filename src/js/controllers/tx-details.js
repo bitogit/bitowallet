@@ -12,12 +12,15 @@ angular.module('copayApp.controllers').controller('txDetailsController', functio
     $scope.color = $scope.wallet.color;
     $scope.copayerId = $scope.wallet.credentials.copayerId;
     $scope.isShared = $scope.wallet.credentials.n > 1;
+  });
+
+  $scope.$on("$ionicView.afterEnter", function(event) {
     updateTx();
 
     listeners = [
       $rootScope.$on('bwsEvent', function(e, walletId, type, n) {
         if (type == 'NewBlock' && n && n.data && n.data.network == 'livenet') {
-          updateTx();
+          updateTx({hideLoading: true});
         }
       })
     ];
@@ -88,10 +91,11 @@ angular.module('copayApp.controllers').controller('txDetailsController', functio
     }, 10);
   }
 
-  var updateTx = function() {
-    ongoingProcess.set('loadingTxInfo', true);
+  var updateTx = function(opts) {
+    opts = opts || {};
+    if (!opts.hideLoading) ongoingProcess.set('loadingTxInfo', true);
     walletService.getTx($scope.wallet, txId, function(err, tx) {
-      ongoingProcess.set('loadingTxInfo', false);
+      if (!opts.hideLoading) ongoingProcess.set('loadingTxInfo', false);
       if (err) {
         $log.warn('Error getting transaction' + err);
         $ionicHistory.goBack();
@@ -120,7 +124,7 @@ angular.module('copayApp.controllers').controller('txDetailsController', functio
       });
     });
   };
-  
+
   $scope.showCommentPopup = function() {
     var opts = {};
     if ($scope.btx.message) {
