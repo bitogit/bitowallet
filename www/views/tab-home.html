@@ -29,7 +29,7 @@
       </div>
       <div>
         <i class="icon big-icon-svg">
-          <img src="img/check-white.svg" class="bg green"/>
+          <img src="img/check-white.svg" class="bg accent"/>
         </i>
       </div>
       <div class="title" translate>
@@ -71,7 +71,7 @@
       <div>
         <a ng-if="!wallets[0]" ui-sref="tabs.add" class="item item-icon-left item-big-icon-left item-icon-right next-step">
          <i class="icon big-icon-svg">
-           <img src="img/icon-wallet.svg" class="bg wallet icon-create-wallet"/>
+           <img src="img/icon-wallet.png" class="bg wallet icon-create-wallet"/>
          </i>
           <span translate>Create bitcoin wallet</span>
           <i class="icon bp-arrow-right"></i>
@@ -80,7 +80,7 @@
            class="item item-sub item-icon-left item-big-icon-left item-icon-right wallet"
            ng-click="openWallet(wallet)">
           <i class="icon big-icon-svg">
-            <img src="img/icon-wallet.svg" ng-class="{'wallet-background-color-default': !wallet.color}" ng-style="{'background-color': wallet.color}" class="bg wallet"/>
+            <img src="img/icon-wallet.png" ng-class="{'wallet-background-color-default': !wallet.color}" ng-style="{'background-color': wallet.color}" class="bg wallet"/>
           </i>
           <span>
             {{wallet.name || wallet.id}}
@@ -120,9 +120,9 @@
           <td>{{rbUserData.cashback.paid}}</td>
         </tr>
         <tr class="rb-titles">
-          <td>Pending</td>
-          <td>Available</td>
-          <td>Lifetime</td>
+          <td>Pending<br>Bitcredits</td>
+          <td>Available<br>Bitcredits</td>
+          <td>Lifetime<br>Bitcredits</td>
         </tr>
       </table>
     </div>

@@ -74,11 +74,11 @@
           <span class="label" translate>From</span>
           <div class="wallet">
             <i class="icon big-icon-svg">
-              <img src="img/icon-wallet.svg" ng-class="{'wallet-background-color-default': !wallet.color}" ng-style="{'background-color': wallet.color}" class="bg"/>
+              <img src="img/icon-wallet.png" ng-class="{'wallet-background-color-default': !wallet.color}" ng-style="{'background-color': wallet.color}" class="bg"/>
             </i>
             <div>{{wallet.name}}</div>
           </div>
-        </div> 
+        </div>
         <div class="item single-line" ng-if="isShared">
           <span class="label" translate>Created by</span>
           <span class="item-note">
@@ -90,7 +90,7 @@
           <span class="item-note">
             <time>{{ (tx.ts || tx.createdOn ) * 1000 | amDateFormat:'MM/DD/YYYY hh:mm a'}}</time>
           </span>
-        </div> 
+        </div>
         <div class="item single-line" ng-show="tx.message">
           <span class="label" translate>Memo</span>
           <span class="item-note">

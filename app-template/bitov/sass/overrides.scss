@@ -15,7 +15,7 @@ $v-success-color:                                    #1abb9b;
 $v-warning-color:                                    #bb331a;
 
 /* Theme */
-$v-default-wallet-color-index:                       6;
+$v-default-wallet-color-index:                       1;
 $v-top-tabs-color:                                   $v-accent-color;
 $v-wallet-backup-phrase-color:                       $v-text-primary-color;
 $v-wallet-backup-select-phrase-color:                $v-secondary-color;
@@ -59,7 +59,7 @@ $v-onboarding-backup-warning-bg:                     url(../img/app/backup-warni
 $v-onboarding-button-back-color:                     $v-accent-color;
 
 $v-onboarding-button-secondary-bg:                   $v-secondary-color;
-$v-onboarding-button-secondary-color:                $v-accent-color;
+$v-onboarding-button-secondary-color:                white;
 $v-onboarding-button-secondary-active-bg:            darken($v-secondary-color, 10%);
 $v-onboarding-button-secondary-clear-color:          $v-accent-color;
 $v-onboarding-button-secondary-outline-border:       $v-accent-color;

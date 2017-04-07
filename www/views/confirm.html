@@ -48,7 +48,7 @@
           </span>
           <div class="wallet" ng-if="recipientType == 'wallet'">
             <i class="icon big-icon-svg">
-              <img src="img/icon-wallet.svg" ng-style="{'background-color': toColor}" class="bg"/>
+              <img src="img/icon-wallet.png" ng-style="{'background-color': toColor}" class="bg"/>
             </i>
             <div copy-to-clipboard="toAddress" class="ellipsis">
               <contact ng-if="!toName" address="{{toAddress}}"></contact>
@@ -65,13 +65,13 @@
           <span class="label" translate>From</span>
           <div class="wallet" ng-if="wallet">
             <i class="icon big-icon-svg">
-              <img src="img/icon-wallet.svg" ng-class="{'wallet-background-color-default': !wallet.color}" ng-style="{'background-color': wallet.color}" class="bg"/>
+              <img src="img/icon-wallet.png" ng-class="{'wallet-background-color-default': !wallet.color}" ng-style="{'background-color': wallet.color}" class="bg"/>
             </i>
             <div>{{wallet.name}}</div>
           </div>
           <div class="wallet" ng-if="!wallet">
             <i class="icon big-icon-svg">
-              <img src="img/icon-wallet.svg" ng-style="{'background-color': 'grey'}" class="bg"/>
+              <img src="img/icon-wallet.png" ng-style="{'background-color': 'grey'}" class="bg"/>
             </i>
             <div>...</div>
           </div>

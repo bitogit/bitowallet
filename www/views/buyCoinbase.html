@@ -17,7 +17,7 @@
         <div class="amount-label">
           <div class="amount">{{amountUnitStr}}</div>
           <div class="alternative" ng-if="buyPrice">
-            <span ng-show="isFiat">{{buyRequestInfo.amount.amount}} {{buyRequestInfo.amount.currency}}</span> 
+            <span ng-show="isFiat">{{buyRequestInfo.amount.amount}} {{buyRequestInfo.amount.currency}}</span>
             @ ${{buyPrice.amount}} per BTC
           </div>
         </div>
@@ -38,7 +38,7 @@
           <div class="label">Receive in</div>
           <div class="wallet">
             <i class="icon big-icon-svg">
-              <img src="img/icon-wallet.svg" ng-class="{'wallet-background-color-default': !wallet.color}" ng-style="{'background-color': wallet.color}" class="bg">
+              <img src="img/icon-wallet.png" ng-class="{'wallet-background-color-default': !wallet.color}" ng-style="{'background-color': wallet.color}" class="bg">
             </i>
             {{wallet ? wallet.name : '...'}}
           </div>
@@ -59,7 +59,7 @@
             {{fee.type}} fee
           </span>
           <span class="item-note">
-            {{fee.amount.amount}} {{fee.amount.currency}} 
+            {{fee.amount.amount}} {{fee.amount.currency}}
           </span>
         </div>
         <div class="item">

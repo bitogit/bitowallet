@@ -128,10 +128,10 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
   };
 
   var loadStoredStateThen = function(cb) {
-    if (rbState.authState == 'init') {
+    if (rbState.authState === 'init') {
       storageService.getRetailBenefitsState(function (err, storedRBState) {
         if (err) return cb(err);
-        if (storedRBState != null) {
+        if (storedRBState !== null) {
           lodash.assign(rbState, storedRBState);
         }
         cb();
@@ -209,7 +209,7 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
         return cb(null, rbState.authState);
       });
     }, function(data) {
-      if (data.statusText == 'Unauthorized') {
+      if (data.statusText === 'Unauthorized') {
         return cb("Invalid username or password");
       }
       cb("An error occurred");

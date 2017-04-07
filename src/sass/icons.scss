@@ -47,6 +47,9 @@
     &.green{
       background: rgb(1, 209, 162);
     }
+    &.accent{
+      background: $v-accent-color;
+    }
   }
 }
 

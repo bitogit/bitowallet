@@ -17,8 +17,8 @@
         <div class="amount-label">
           <div class="amount">{{amountUnitStr}}</div>
           <div class="alternative">
-            <span ng-show="!isFiat">{{buyInfo.subtotal}} {{buyInfo.currency}}</span> 
-            <span ng-show="isFiat">{{buyInfo.qty}} BTC</span> 
+            <span ng-show="!isFiat">{{buyInfo.subtotal}} {{buyInfo.currency}}</span>
+            <span ng-show="isFiat">{{buyInfo.qty}} BTC</span>
             @ ${{buyInfo.price}} per BTC
           </div>
         </div>
@@ -30,7 +30,7 @@
           <div class="label">Receive in</div>
           <div class="wallet">
             <i class="icon big-icon-svg">
-              <img src="img/icon-wallet.svg" ng-style="{'background-color': wallet.color}" class="bg">
+              <img src="img/icon-wallet.png" ng-style="{'background-color': wallet.color}" class="bg">
             </i>
             {{wallet ? wallet.name : '...'}}
           </div>

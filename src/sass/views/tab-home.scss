@@ -5,6 +5,7 @@
   }
   .icon-bitov {
     background-image: url("../img/icon-bitov.png");
+    border-radius: 20px;
   }
   .icon-buy-bitcoin {
     background-image: $v-bitcoin-icon;
@@ -119,7 +120,7 @@
       margin: 20px 3em 2.5em;
     }
     .big-icon-svg{
-      .bg.green{
+      .bg.accent{
         padding: 0 10px;
         box-shadow: none;
       }
