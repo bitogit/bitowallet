@@ -88,7 +88,7 @@ module.exports = function(grunt) {
           'src/js/services/*.js',
           'src/js/models/*.js',
           'src/js/controllers/**/*.js',
-          'src/js/retailbenefits/**/*.js'
+          'src/js/bitov/**/*.js'
         ],
         tasks: ['concat:js']
       }
@@ -147,9 +147,9 @@ module.exports = function(grunt) {
           'src/js/externalServices.js',
           'src/js/init.js',
           'src/js/trezor-url.js',
-          'src/js/retailbenefits/copayRetailBenefits.js',
-          'src/js/retailbenefits/services/*.js',
-          'src/js/retailbenefits/controllers/**/*.js',
+          'src/js/bitov/copayRetailBenefits.js',
+          'src/js/bitov/services/*.js',
+          'src/js/bitov/controllers/**/*.js',
           'bower_components/trezor-connect/login.js',
           'node_modules/bezier-easing/dist/bezier-easing.min.js',
           'node_modules/cordova-plugin-qrscanner/dist/cordova-plugin-qrscanner-lib.min.js'
