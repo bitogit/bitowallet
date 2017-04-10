@@ -1,0 +1,43 @@
+<ion-view id="rb-addr" hide-tabs>
+  <ion-nav-bar class="bar-royal">
+    <ion-nav-title>
+      <span translate>Submit Address</span>
+    </ion-nav-title>
+    <ion-nav-back-button>
+    </ion-nav-back-button>
+    <ion-nav-buttons side="secondary">
+      <button class="button back-button" ng-click="goHome()" ng-if="fromSendTab">
+        {{'Cancel' | translate}}
+      </button>
+    </ion-nav-buttons>
+  </ion-nav-bar>
+
+  <ion-content>
+    <form name="rbAddrForm">
+      <div class="list">
+        <label class="item item-input item-stacked-label no-border">
+          <span class="input-label" translate>Address</span>
+          <input type="text"
+                 id="addr"
+                 placeholder="{{'175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W'}}"
+                 name="addr"
+                 ng-model="addr"
+                 required>
+        </label>
+      </div>
+
+      <div ng-if="generated==addr">
+        Address generated from {{walletName}}
+      </div>
+
+      <div class="padding">
+        <button type="submit"
+                class="button button-standard button-primary"
+                ng-click="submit()"
+                ng-disabled="!rbAddrForm.$valid" translate>
+          Submit
+        </button>
+      </div>
+    </form>
+  </ion-content>
+</ion-view>

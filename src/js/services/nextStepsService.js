@@ -3,6 +3,16 @@
    var root = {};
    var services = [];
 
+   root.registerFirst = function(serviceInfo) {
+     $log.info('Adding NextSteps entry:' + serviceInfo.name);
+
+     if (!lodash.find(services, function(x) {
+         return x.name == serviceInfo.name;
+       })) {
+       services.unshift(serviceInfo);
+     }
+   };
+
    root.register = function(serviceInfo) {
      $log.info('Adding NextSteps entry:' + serviceInfo.name);
 

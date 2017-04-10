@@ -110,10 +110,19 @@ angular.module('copayApp.controllers').controller('tabHomeController',
         return $scope.rbUserData && 'id' in $scope.rbUserData;
       };
       retailBenefitsService.getUserData(function(err, userData) {
-        if (err && err != 'init') {
-          $log.error("Retail benefits error:", err);
+        if (err && err !== 'init') {
+          retailBenefitsService.registerNextStep();
+          $scope.rbUserData = {};
           return;
         }
+        retailBenefitsService.needAddress(function(na) {
+          if (na) {
+            retailBenefitsService.registerAddressStep();
+          }
+          else {
+            retailBenefitsService.clearAddressStep();
+          }
+        });
         $scope.rbUserData = userData;
       });
 

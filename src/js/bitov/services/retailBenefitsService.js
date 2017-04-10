@@ -1,48 +1,6 @@
 'use strict';
 
 angular.module('copayApp.services').factory('retailBenefitsService', function($http, $log, $window, platformInfo, storageService, lodash, nextStepsService) {
-  /*
-  State:
-  - AuthResponse
-    - Auth token
-    - Expires in
-    - Refresh token
-  - Auth expire date
-  - User data
-    - Email
-    - Pending Bitcoin Credit
-    - Total Bitcoin Credit
-
-  Auth States:
-  - Anonymous
-  - LoggingIn
-  - Authenticated
-  - Expired
-  - RefreshingAccessToken
-
-  Actions:
-  - Get user data -> cb({user data}, err)
-    - Anonymous -> cb({}, anon)
-    - LoggingIn -> cb({}, loading)
-    - RefreshingAccessToken -> cb({}, loading)
-    - // Show loading
-    - // Check state -> cb({cached}, cache)
-    - Expired -> RefreshAccessToken
-    - Authenticated -> get -> cb({resp}, null) -> // cache
-    - cb({}, err)
-
-  - RefreshAccessToken
-    - Anonymous -> cb({}, anon)
-    - LoggingIn, RefreshingAccessToken -> cb({}, loading)
-    - Authenticated, Expired -> cb({resp}, null)
-
-  - Link user account -> cb({auth response}, err)
-    - LoggingIn, RefreshingAccessToken -> cb({}, loading)
-    - // Show loading
-    - post -> cb({resp}, null) -> state
-
-  */
-
   var root = {};
   var credentials = {};
   var rbState = {
@@ -56,75 +14,44 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
   };
 
   var setCredentials = function() {
-    if (!$window.externalServices || !$window.externalServices.retailbenefits) {
+    if (!$window.externalServices || !$window.externalServices.wordpress) {
       return;
     }
 
-    var rb = $window.externalServices.retailbenefits;
+    var wp = $window.externalServices.wordpress;
 
-    credentials.HOST = rb.host;
-    credentials.CLIENT_ID = rb.client_id;
-    credentials.CLIENT_SECRET = rb.client_secret;
+    credentials.WP_HOST = wp.host;
   };
 
   var getAuthURL = function() {
-    return credentials.HOST + '/v3/oauth/token';
+    return credentials.WP_HOST + '/sso/v1/auth';
   };
 
-
-  var refreshForAuthState = function(refreshToken, cb) {
-    var req = {
-      method: 'POST',
-      url: getAuthURL(),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      data: {
-        grant_type: 'refresh_token',
-        client_id: credentials.CLIENT_ID,
-        client_secret: credentials.CLIENT_SECRET,
-        refresh_token: refreshToken
-      }
-    };
-
-    $http(req).then(function(data) {
-      $log.info('RetailBenefits Authorization Access Token: SUCCESS');
-      return cb(null, data.data);
-    }, function(data) {
-      $log.error('RetailBenefits Authorization Access Token: ERROR ' + data.statusText);
-      return cb('RetailBenefits Authorization Access Token: ERROR ' + data.statusText);
-    });
-  };
-
-  var _get = function(endpoint, token) {
+  var _get = function(endpoint, nonce) {
     return {
       method: 'GET',
-      url: credentials.HOST + '/v3' + endpoint,
+      url: credentials.WP_HOST + endpoint,
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Authorization': 'Bearer ' + token
-      }
+        'X-WP-Nonce': nonce
+      },
+      withCredentials: true
     };
   };
 
-  var _post = function(endpoint, token, data) {
+  var _post = function(endpoint, data, nonce) {
     return {
       method: 'POST',
-      url: credentials.HOST + '/v3' + endpoint,
+      url: credentials.WP_HOST + endpoint,
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Authorization': 'Bearer ' + token
+        'X-WP-nonce': nonce
       },
-      data: data
+      data: data,
+      withCredentials: true
     };
-  };
-
-  var accessTokenExpired = function () {
-    return 'authData' in rbState && 'created_at' in rbState.authData && 'expires_in' in rbState.authData &&
-            new Date((rbState.authData['created_at'] + rbState.authData['expires_in']) * 1000) < new Date()
   };
 
   var loadStoredStateThen = function(cb) {
@@ -142,45 +69,14 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
     }
   };
 
-  var getAccessToken = function(cb /* (err, token) */) {
-    loadStoredStateThen(function(err) {
-      if (err) return cb(err);
-      if (accessTokenExpired()) {
-        rbState.authState = 'expired';
-        if ('refresh_token' in rbState.authData) {
-          rbState.authState = 'refreshingAccessToken';
-          refreshForAuthState(rbState.authData['refresh_token'], function (err, data) {
-            if (err) return cb(err);
-            rbState.authData = data;
-            rbState.authState = 'authenticated';
-            saveState(function (err) {
-              if (err) return cb(err);
-              cb(null, rbState.authData['access_token']);
-            });
-          });
-        }
-      }
-      else if ('authData' in rbState && 'access_token' in rbState.authData) {
-        cb(null, rbState.authData['access_token']);
-      }
-      else {
-        cb(rbState.authState);
-      }
-    });
-  };
-
   root.hasCredentials = function () {
-    return 'HOST' in credentials && 'CLIENT_ID' in credentials && 'CLIENT_SECRET' in credentials;
+    return 'WP_HOST' in credentials;
   };
 
-  root.needLogin = function(cb /* (err, needsLogin) */) {
-    getAccessToken(function(err, token) {
-      if (err || !token) {
-        cb(null, true);
-      }
-      else {
-        cb(null, false);
-      }
+  root.needLogin = function(cb /* (err, needLogin) */) {
+    loadStoredStateThen(function(err) {
+      if (err) return cb(err, true);
+      return rbState.authState === 'authenticated';
     })
   };
 
@@ -193,12 +89,10 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
         'Accept': 'application/json'
       },
       data: {
-        grant_type: 'password',
-        client_id: credentials.CLIENT_ID,
-        client_secret: credentials.CLIENT_SECRET,
         username: username,
         password: password
-      }
+      },
+      withCredentials: true
     };
 
     $http(req).then(function(data) {
@@ -206,7 +100,7 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
       rbState.authData = data.data;
       saveState(function (err) {
         if (err) return cb(err);
-        return cb(null, rbState.authState);
+        cb(null, rbState.authState);
       });
     }, function(data) {
       if (data.statusText === 'Unauthorized') {
@@ -219,14 +113,10 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
 
   root.getUserData = function (cb) {
     // CB called multiple times, once with cached, once with updated
-    cb(null, rbState.userData);
-    getAccessToken(function (err, token) {
-      if (err) return cb(err);
-      $http(_get('/account', token)).then(function(data) {
-        if (!data.data || data.data.length < 1) {
-          return cb("Incorrect user data returned");
-        }
-        rbState.userData = data.data[0];
+    loadStoredStateThen(function () {
+      cb(null, rbState.userData);
+      $http(_get('/sso/v1/account', rbState.authData['wp-nonce'])).then(function(data) {
+        rbState.userData = data.data;
         saveState(function (err) {
           if (err) return cb(err);
           cb(err, rbState.userData);
@@ -238,7 +128,7 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
   };
 
   root.registerNextStep = function() {
-    nextStepsService.register({
+    nextStepsService.registerFirst({
       title: 'Link Bitovation Account',
       name: 'linkbitovation',
       icon: 'icon-bitov',
@@ -250,9 +140,50 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
     nextStepsService.unregister('linkbitovation');
   };
 
+  root.needAddress = function(cb /* bool needsAddress */) {
+    loadStoredStateThen(function() {
+      console.log(rbState);
+      if ('authData' in rbState) {
+        if (!('wp-nonce' in rbState.authData)) {
+          return cb(false);
+        }
+        if ('address' in rbState.authData && rbState.authData['address'] !== null) {
+          return cb(false);
+        }
+      }
+      return cb(true);
+    });
+  };
+
+  root.submitAddress = function(addr, cb /* err */) {
+    $http(_post('/sso/v1/address', {address:addr}, rbState.authData['wp-nonce'])).then(function(data) {
+      rbState.authData.address = addr;
+      saveState(function (err) {
+        if (err) return cb(err);
+        cb(null);
+      });
+    }, function(data) {
+      return cb('RetailBenefits submitAddress ERROR: ' + data.statusText);
+    });
+  };
+
+  root.registerAddressStep = function() {
+    nextStepsService.registerFirst({
+      title: 'Submit reward address to Bitovation',
+      name: 'rewardaddress',
+      icon: 'icon-bitcoin',
+      sref: 'tabs.bitovAddr'
+    });
+  };
+
+  root.clearAddressStep = function (){
+    nextStepsService.unregister('rewardaddress');
+  };
+
   root.logout = function(cb) {
     storageService.setRetailBenefitsState({}, function() {
       storageService.removeRetailBenefitsState(cb);
+      root.clearAddressStep();
       rbState = {};
     });
   };
