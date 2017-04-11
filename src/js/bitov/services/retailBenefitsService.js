@@ -24,7 +24,6 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
   };
 
   var _get = function(endpoint) {
-    console.log(rbState);
     return {
       method: 'GET',
       url: credentials.WP_HOST + endpoint,

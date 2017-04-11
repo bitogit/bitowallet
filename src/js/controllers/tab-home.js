@@ -124,7 +124,6 @@ angular.module('copayApp.controllers').controller('tabHomeController',
           }
         });
         $scope.rbUserData = userData;
-        console.log(userData);
       });
 
       $scope.logoutRB = function() {
