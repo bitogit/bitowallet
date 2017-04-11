@@ -23,34 +23,29 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
     credentials.WP_HOST = wp.host;
   };
 
-  var getAuthURL = function() {
-    return credentials.WP_HOST + '/sso/v1/auth';
-  };
-
-  var _get = function(endpoint, nonce) {
+  var _get = function(endpoint) {
+    console.log(rbState);
     return {
       method: 'GET',
       url: credentials.WP_HOST + endpoint,
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'X-WP-Nonce': nonce
-      },
-      withCredentials: true
+        'Authorization': 'Bearer ' + rbState.authData['token']
+      }
     };
   };
 
-  var _post = function(endpoint, data, nonce) {
+  var _post_auth = function(endpoint, data) {
     return {
       method: 'POST',
       url: credentials.WP_HOST + endpoint,
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'X-WP-nonce': nonce
+        'Authorization': 'Bearer ' + rbState.authData['token']
       },
-      data: data,
-      withCredentials: true
+      data: data
     };
   };
 
@@ -81,9 +76,9 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
   };
 
   root.login = function(username, password, cb /* (err, authState) */) {
-    var req = {
+    $http({
       method: 'POST',
-      url: getAuthURL(),
+      url: credentials.WP_HOST + '/sso/v1/auth',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
@@ -91,23 +86,21 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
       data: {
         username: username,
         password: password
-      },
-      withCredentials: true
-    };
-
-    $http(req).then(function(data) {
+      }
+    }).then(function(resp) {
       rbState.authState = 'authenticated';
-      rbState.authData = data.data;
+      rbState.authData = resp.data;
+      rbState.userData.address = resp.data.address;
       saveState(function (err) {
         if (err) return cb(err);
         cb(null, rbState.authState);
       });
-    }, function(data) {
-      if (data.statusText === 'Unauthorized') {
+    }, function(resp) {
+      if (resp.statusText === 'Forbidden') {
         return cb("Invalid username or password");
       }
       cb("An error occurred");
-      $log.error("Got " + data.statusText + " while trying to login");
+      $log.error("Got " + resp.statusText + " while trying to login");
     });
   };
 
@@ -115,8 +108,9 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
     // CB called multiple times, once with cached, once with updated
     loadStoredStateThen(function () {
       cb(null, rbState.userData);
-      $http(_get('/sso/v1/account', rbState.authData['wp-nonce'])).then(function(data) {
-        rbState.userData = data.data;
+      $http(_get('/sso/v1/account')).then(function(resp) {
+        rbState.userData = resp.data;
+        rbState.userData.address = rbState.authData.address;
         saveState(function (err) {
           if (err) return cb(err);
           cb(err, rbState.userData);
@@ -142,9 +136,8 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
 
   root.needAddress = function(cb /* bool needsAddress */) {
     loadStoredStateThen(function() {
-      console.log(rbState);
       if ('authData' in rbState) {
-        if (!('wp-nonce' in rbState.authData)) {
+        if (!('token' in rbState.authData)) {
           return cb(false);
         }
         if ('address' in rbState.authData && rbState.authData['address'] !== null) {
@@ -156,8 +149,9 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
   };
 
   root.submitAddress = function(addr, cb /* err */) {
-    $http(_post('/sso/v1/address', {address:addr}, rbState.authData['wp-nonce'])).then(function(data) {
+    $http(_post_auth('/sso/v1/address', {address:addr})).then(function(data) {
       rbState.authData.address = addr;
+      rbState.userData.address = addr;
       saveState(function (err) {
         if (err) return cb(err);
         cb(null);
@@ -169,9 +163,9 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
 
   root.registerAddressStep = function() {
     nextStepsService.registerFirst({
-      title: 'Submit reward address to Bitovation',
+      title: 'Submit Reward Address',
       name: 'rewardaddress',
-      icon: 'icon-bitcoin',
+      icon: 'icon-bitov',
       sref: 'tabs.bitovAddr'
     });
   };

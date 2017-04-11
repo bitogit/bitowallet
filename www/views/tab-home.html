@@ -124,6 +124,9 @@
           <td>Available<br>Bitcredits</td>
           <td>Lifetime<br>Bitcredits</td>
         </tr>
+        <tr ng-if="rbUserData.address" class="rb-address">
+          <td colspan="3">PAYOUT ADDRESS {{rbUserData.address}}</td>
+        </tr>
       </table>
     </div>
 
