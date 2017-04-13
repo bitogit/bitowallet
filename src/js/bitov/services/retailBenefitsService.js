@@ -89,7 +89,10 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
     }).then(function(resp) {
       rbState.authState = 'authenticated';
       rbState.authData = resp.data;
-      rbState.userData.address = resp.data.address;
+
+      if (rbState.userData && resp.data && ('address' in resp.data)) {
+        rbState.userData.address = resp.data.address;
+      }
       saveState(function (err) {
         if (err) return cb(err);
         cb(null, rbState.authState);
@@ -108,8 +111,13 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
     loadStoredStateThen(function () {
       cb(null, rbState.userData);
       $http(_get('/sso/v1/account')).then(function(resp) {
+        if (!resp.data) {
+          return cb("No data returned");
+        }
         rbState.userData = resp.data;
-        rbState.userData.address = rbState.authData.address;
+        if (rbState.authData && ('address' in rbState.authData)) {
+          rbState.userData.address = rbState.authData.address;
+        }
         saveState(function (err) {
           if (err) return cb(err);
           cb(err, rbState.userData);

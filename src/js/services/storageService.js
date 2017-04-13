@@ -313,10 +313,20 @@ angular.module('copayApp.services')
     };
 
     root.setRetailBenefitsState = function(state, cb) {
-      storage.set('retailBenefitsState', state, cb);
+      var tcb = function(a, b) {
+        $timeout(function() {
+          cb(a, b);
+        })
+      };
+      storage.set('retailBenefitsState', state, tcb);
     };
 
     root.getRetailBenefitsState = function(cb) {
+      var tcb = function(a, b) {
+        $timeout(function() {
+          cb(a, b);
+        })
+      };
       storage.get('retailBenefitsState', function (err, data) {
         if (err) return cb(err);
         if (lodash.isString(data)) {
@@ -324,15 +334,20 @@ angular.module('copayApp.services')
             data = JSON.parse(data);
           }
           catch (e) {
-            cb(e);
+            tcb(e);
           }
         }
-        cb(err, data);
+        tcb(err, data);
       });
     };
 
     root.removeRetailBenefitsState = function(cb) {
-      storage.remove('retailBenefitsState', cb);
+      var tcb = function(a, b) {
+        $timeout(function() {
+          cb(a, b);
+        })
+      };
+      storage.remove('retailBenefitsState', tcb);
     };
 
     root.setAddressbook = function(network, addressbook, cb) {
