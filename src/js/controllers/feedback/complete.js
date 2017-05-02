@@ -5,9 +5,10 @@ angular.module('copayApp.controllers').controller('completeController', function
   $scope.title = gettextCatalog.getString("Share {{appName}}", {
     appName: appConfigService.nameCase
   });
+  var packageName = appConfigService.packageName;
 
   var defaults = configService.getDefaults();
-  var downloadUrl = appConfigService.name == 'copay' ? defaults.download.copay.url : defaults.download.bitpay.url;
+  var downloadUrl = defaults.download[packageName].url;
 
   function quickFeedback(cb) {
     window.plugins.spinnerDialog.show();

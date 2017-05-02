@@ -3,6 +3,7 @@
 angular.module('copayApp.controllers').controller('rateAppController', function($scope, $state, $stateParams, $window, lodash, externalLinkService, configService, platformInfo, feedbackService, ongoingProcess, popupService, appConfigService) {
   $scope.score = parseInt($stateParams.score);
   $scope.appName = appConfigService.nameCase;
+  $scope.packageName = appConfigService.packageName;
   var isAndroid = platformInfo.isAndroid;
   var isIOS = platformInfo.isIOS;
   var isWP = platformInfo.isWP;
@@ -37,13 +38,12 @@ angular.module('copayApp.controllers').controller('rateAppController', function(
 
   $scope.goAppStore = function() {
     var defaults = configService.getDefaults();
-    var url;
+    var platform;
     if (isAndroid)
-      url = $scope.appName == 'Copay' ? defaults.rateApp.copay.android : defaults.rateApp.bitpay.android;
+      platform = 'android';
     if (isIOS)
-      url = $scope.appName == 'Copay' ? defaults.rateApp.copay.ios : defaults.rateApp.bitpay.ios;
-    // if (isWP)
-    // url = $scope.appName == 'Copay' ? defaults.rateApp.copay.windows : defaults.rateApp.bitpay.windows;
+      platform = 'ios';
+    var url = defaults.rateApp[$scope.packageName][platform];
 
     externalLinkService.open(url);
     $state.go('tabs.rate.complete', {
