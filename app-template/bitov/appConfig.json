@@ -31,6 +31,7 @@
     "url": "https://api.github.com/repos/bitpay/copay/releases/latest"
   },
   "shopUrl": "https://bitovationdark.staging.wpengine.com/",
+  "supportUrl": "https://bitovationdark.wpengine.com/",
   "appDescription": "Bitovation Bitcoin Wallet",
   "winAppName": "BitovationWallet",
   "wpPublisherId": "{31cdd08b-457c-413d-b440-f6665eec847d}",

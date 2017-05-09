@@ -80,7 +80,7 @@ angular.module('copayApp.controllers').controller('tabHomeController',
     };
 
     $scope.visitShop = function() {
-      var url = configService.getSync().shopUrl;
+      var url = appConfigService.shopUrl;
       var optIn = false;
       externalLinkService.open(url, optIn);
     };
