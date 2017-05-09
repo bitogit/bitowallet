@@ -655,19 +655,19 @@ angular.module('copayApp').config(function(historicLogProvider, $provide, $logPr
        *
        */
 
-      .state('tabs.receive.addresses', {
+      .state('tabs.settings.addresses', {
         url: '/addresses/:walletId/:toAddress',
         views: {
-          'tab-receive@tabs': {
+          'tab-settings@tabs': {
             controller: 'addressesController',
             templateUrl: 'views/addresses.html'
           }
         }
       })
-      .state('tabs.receive.allAddresses', {
+      .state('tabs.settings.allAddresses', {
         url: '/allAddresses/:walletId',
         views: {
-          'tab-receive@tabs': {
+          'tab-settings@tabs': {
             controller: 'addressesController',
             templateUrl: 'views/allAddresses.html'
           }
@@ -681,7 +681,7 @@ angular.module('copayApp').config(function(historicLogProvider, $provide, $logPr
        */
 
       .state('tabs.receive.amount', {
-        url: '/amount/:customAmount/:toAddress',
+        url: '/amount/:walletId/:customAmount/:toAddress',
         views: {
           'tab-receive@tabs': {
             controller: 'amountController',
@@ -690,7 +690,7 @@ angular.module('copayApp').config(function(historicLogProvider, $provide, $logPr
         }
       })
       .state('tabs.receive.customAmount', {
-        url: '/customAmount/:toAmount/:toAddress',
+        url: '/customAmount/:walletId/:toAmount/:toAddress',
         views: {
           'tab-receive@tabs': {
             controller: 'customAmountController',
@@ -1175,8 +1175,10 @@ angular.module('copayApp').config(function(historicLogProvider, $provide, $logPr
 
         //views with disable backbutton
         var matchComplete = $ionicHistory.currentStateName() == 'tabs.rate.complete' ? true : false;
+        var matchLockedView = $ionicHistory.currentStateName() == 'lockedView' ? true : false;
+        var matchPin = $ionicHistory.currentStateName() == 'pin' ? true : false;
 
-        if ($ionicHistory.backView() && !fromTabs && !fromOnboarding && !matchComplete) {
+        if ($ionicHistory.backView() && !fromTabs && !fromOnboarding && !matchComplete && !matchPin && !matchLockedView) {
           $ionicHistory.goBack();
         } else
         if ($rootScope.backButtonPressedOnceToExit) {
