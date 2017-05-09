@@ -7,8 +7,8 @@ angular.module('copayApp.controllers').controller('rbLoginController', function(
   };
 
   $scope.$on("$ionicView.beforeEnter", function(event, data) {
-    retailBenefitsService.needLogin(function (err, needLogin) {
-      if (!needLogin) {
+    retailBenefitsService.checkLoggedIn(function (err, isLoggedIn) {
+      if (isLoggedIn) {
         $ionicHistory.goBack();
       }
     });

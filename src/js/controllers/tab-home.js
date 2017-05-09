@@ -14,6 +14,7 @@ angular.module('copayApp.controllers').controller('tabHomeController',
     $scope.isAndroid = platformInfo.isAndroid;
     $scope.isNW = platformInfo.isNW;
     $scope.showRateCard = {};
+    $scope.rbUserData = {};
 
     $scope.$on("$ionicView.afterEnter", function() {
       startupService.ready();
@@ -74,6 +75,16 @@ angular.module('copayApp.controllers').controller('tabHomeController',
       };
     });
 
+    $scope.rbUserDataLoaded = function() {
+      return $scope.rbUserData && 'id' in $scope.rbUserData;
+    };
+
+    $scope.visitShop = function() {
+      var url = configService.getSync().shopUrl;
+      var optIn = false;
+      externalLinkService.open(url, optIn);
+    };
+
     $scope.$on("$ionicView.enter", function(event, data) {
       updateAllWallets();
 
@@ -105,37 +116,27 @@ angular.module('copayApp.controllers').controller('tabHomeController',
         $scope.bitpayCardItems = cards;
       });
 
-      $scope.rbUserData = {};
-      $scope.rbUserDataLoaded = function() {
-        return $scope.rbUserData && 'id' in $scope.rbUserData;
-      };
-      retailBenefitsService.getUserData(function(err, userData) {
-        if (err && err !== 'init') {
-          retailBenefitsService.registerNextStep();
-          $scope.rbUserData = {};
-          return;
-        }
-        retailBenefitsService.needAddress(function(na) {
-          if (na) {
-            retailBenefitsService.registerAddressStep();
-          }
-          else {
-            retailBenefitsService.clearAddressStep();
-          }
-        });
-        $scope.rbUserData = userData;
-      });
 
-      $scope.logoutRB = function() {
-        popupService.showConfirm("Confirm Logout", "Are you sure?", "Logout", "Cancel", function (ok) {
-          if (ok) {
-            retailBenefitsService.logout(function() {
-              $scope.rbUserData = {};
-              retailBenefitsService.registerNextStep();
-            });
+      retailBenefitsService.checkLoggedIn(function(err, isLoggedIn) {
+        if (isLoggedIn && 'id' in $scope.rbUserData) return;
+
+        $scope.rbUserData = {}; // Clears data if logged out
+        retailBenefitsService.getUserData(function(err, userData) {
+          if (err && err !== 'init') {
+            retailBenefitsService.registerNextStep();
+            return;
           }
+          retailBenefitsService.needAddress(function(na) {
+            if (na) {
+              retailBenefitsService.registerAddressStep();
+            }
+            else {
+              retailBenefitsService.clearAddressStep();
+            }
+          });
+          $scope.rbUserData = userData;
         });
-      };
+      });
 
       configService.whenAvailable(function(config) {
         $scope.recentTransactionsEnabled = config.recentTransactions.enabled;

@@ -122,6 +122,15 @@
         <i class="icon bp-arrow-right"></i>
       </a>
 
+      <a class="item item-icon-left item-icon-right"
+         ng-if="bitovationLoggedIn"
+         ng-click="logoutRB()">
+          <i class="icon big-icon-svg">
+            <img src="img/logout.png" class="bg black-image"/>
+          </i>
+          <span>Log out of Bitovation</span>
+      </a>
+
       <a class=" item item-icon-left item-icon-right"
          ng-if="bitpayAccounts || bitpayCards"
          ui-sref="tabs.preferences.bitpayServices">

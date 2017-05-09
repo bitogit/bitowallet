@@ -1,6 +1,7 @@
 'use strict';
 
-angular.module('copayApp.controllers').controller('tabSettingsController', function($rootScope, $timeout, $scope, appConfigService, $ionicModal, $log, lodash, uxLanguage, platformInfo, profileService, feeService, configService, externalLinkService, bitpayAccountService, bitpayCardService, storageService, glideraService, gettextCatalog, buyAndSellService) {
+angular.module('copayApp.controllers').controller('tabSettingsController', function($rootScope, $timeout, $scope, $state, appConfigService, $ionicModal, $log, lodash, uxLanguage, platformInfo, profileService, feeService, configService, externalLinkService, bitpayAccountService, bitpayCardService, storageService, glideraService, gettextCatalog, buyAndSellService, popupService, retailBenefitsService) {
+  $scope.bitovationLoggedIn = false;
 
   var updateConfig = function() {
     $scope.currentLanguageName = uxLanguage.getCurrentLanguageName();
@@ -60,7 +61,22 @@ angular.module('copayApp.controllers').controller('tabSettingsController', funct
       else
         $scope.method = $scope.locked.charAt(0).toUpperCase() + config.lock.method.slice(1);
     });
+    retailBenefitsService.checkLoggedIn(function (err, isLoggedIn) {
+      $scope.bitovationLoggedIn = isLoggedIn;
+    });
   });
+
+  $scope.logoutRB = function() {
+    popupService.showConfirm("Confirm Logout", "Are you sure?", "Logout", "Cancel", function (ok) {
+      if (ok) {
+        retailBenefitsService.logout(function() {
+          $scope.rbUserData = {};
+          retailBenefitsService.registerNextStep();
+          $state.go('tabs.home');
+        });
+      }
+    });
+  };
 
   $scope.$on("$ionicView.enter", function(event, data) {
     updateConfig();

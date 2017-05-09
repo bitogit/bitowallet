@@ -14,8 +14,17 @@ angular.module('copayAddon.retailBenefits')
           }
         }
       })
+      .state('tabs.bitovRegister', {
+        url: '/bitovationRegister',
+        views: {
+          'tab-home@tabs': {
+            controller: 'rbRegisterController',
+            templateUrl: 'views/retailbenefits/register.html'
+          }
+        }
+      })
       .state('tabs.bitovAddr', {
-        url: '/bitovAddr',
+        url: '/bitovationAddr',
         views: {
           'tab-home@tabs': {
             controller: 'rbAddrController',
@@ -26,8 +35,8 @@ angular.module('copayAddon.retailBenefits')
   })
   .run(function (retailBenefitsService, $log) {
     if (retailBenefitsService.hasCredentials()) {
-      retailBenefitsService.needLogin(function (err, needLogin) {
-        if (needLogin) {
+      retailBenefitsService.checkLoggedIn(function (err, isLoggedIn) {
+        if (!isLoggedIn) {
           retailBenefitsService.registerNextStep();
         }
         else {

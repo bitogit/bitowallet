@@ -4,6 +4,8 @@ angular.module('copayApp.services').factory('configService', function(storageSer
   var root = {};
 
   var defaultConfig = {
+    shopUrl: "https://bitovation.com/shop",
+
     // wallet limits
     limits: {
       totalCopayers: 6,
@@ -23,7 +25,7 @@ angular.module('copayApp.services').factory('configService', function(storageSer
         url: 'https://copay.io/#download'
       },
       bitov: {
-        url: 'https://bitovation.com/wallet/'
+        url: 'https://bitovation.com/wallet'
       }
     },
 

@@ -1,19 +1,24 @@
 'use strict';
 
-angular.module('copayApp.services').factory('retailBenefitsService', function($http, $log, $window, platformInfo, storageService, lodash, nextStepsService) {
+angular.module('copayApp.services').factory('retailBenefitsService', function ($http, $log, $window, platformInfo, storageService, lodash, nextStepsService, coinbaseService) {
   var root = {};
   var credentials = {};
-  var rbState = {
-    authData: {},
-    authState: 'init', // anonymous, loggingIn, authenticated, expired, refreshingAccessToken
-    userData: {}
-  };
+  var rbState;
 
-  var saveState = function(cb) {
+  function clearRBState() {
+    rbState = {
+      authData: {},
+      authState: 'init', // anonymous, loggingIn, authenticated, expired, refreshingAccessToken
+      userData: {}
+    };
+  }
+  clearRBState();
+
+  var saveState = function (cb) {
     storageService.setRetailBenefitsState(rbState, cb);
   };
 
-  var setCredentials = function() {
+  var setCredentials = function () {
     if (!$window.externalServices || !$window.externalServices.wordpress) {
       return;
     }
@@ -23,7 +28,7 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
     credentials.WP_HOST = wp.host;
   };
 
-  var _get = function(endpoint) {
+  var _get = function (endpoint) {
     return {
       method: 'GET',
       url: credentials.WP_HOST + endpoint,
@@ -35,7 +40,7 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
     };
   };
 
-  var _post_auth = function(endpoint, data) {
+  var _post_auth = function (endpoint, data) {
     return {
       method: 'POST',
       url: credentials.WP_HOST + endpoint,
@@ -48,7 +53,7 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
     };
   };
 
-  var loadStoredStateThen = function(cb) {
+  var loadStoredStateThen = function (cb) {
     if (rbState.authState === 'init') {
       storageService.getRetailBenefitsState(function (err, storedRBState) {
         if (err) return cb(err);
@@ -67,14 +72,14 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
     return 'WP_HOST' in credentials;
   };
 
-  root.needLogin = function(cb /* (err, needLogin) */) {
-    loadStoredStateThen(function(err) {
-      if (err) return cb(err, true);
-      return rbState.authState === 'authenticated';
+  root.checkLoggedIn = function (cb /* (err, isLoggedIn) */) {
+    loadStoredStateThen(function (err) {
+      if (err) return cb(err, false);
+      return cb(null, rbState.authState === 'authenticated');
     })
   };
 
-  root.login = function(username, password, cb /* (err, authState) */) {
+  root.login = function (username, password, cb /* (err, authState) */) {
     $http({
       method: 'POST',
       url: credentials.WP_HOST + '/sso/v1/auth',
@@ -86,7 +91,7 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
         username: username,
         password: password
       }
-    }).then(function(resp) {
+    }).then(function (resp) {
       rbState.authState = 'authenticated';
       rbState.authData = resp.data;
 
@@ -97,24 +102,75 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
         if (err) return cb(err);
         cb(null, rbState.authState);
       });
-    }, function(resp) {
-      if (resp.statusText === 'Forbidden') {
-        return cb("Invalid username or password");
+    }, function (resp) {
+      if ('data' in resp && 'message' in resp.data) {
+        return cb(resp.data.message);
       }
       cb("An error occurred");
-      $log.error("Got " + resp.statusText + " while trying to login");
+      $log.error(resp);
     });
   };
 
-  root.getUserData = function (cb) {
-    // CB called multiple times, once with cached, once with updated
+  root.register = function (username, password, cb /* (err, authState) */) {
+    $http({
+      method: 'POST',
+      url: credentials.WP_HOST + '/sso/v1/register',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      data: {
+        username: username,
+        password: password
+      }
+    }).then(function (resp) {
+      rbState.authState = 'authenticated';
+      rbState.authData = resp.data;
+
+      if (rbState.userData && resp.data && ('address' in resp.data)) {
+        rbState.userData.address = resp.data.address;
+      }
+      saveState(function (err) {
+        if (err) return cb(err);
+        cb(null, rbState.authState);
+      });
+    }, function (resp) {
+      if ('data' in resp && 'message' in resp.data) {
+        return cb(resp.data.message);
+      }
+      cb("An error occurred");
+      $log.error(resp);
+    });
+  };
+
+  function getPrice () {
+    $http({
+      method: 'GET',
+      url: 'https://api.coinbase.com/v2/prices/spot?currency=USD',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'CB-VERSION': '2017-05-08'
+      }
+    }).then(function (resp) {
+      if (!resp.data) {
+        $log.error("No data returned");
+        return;
+      }
+
+      $log.info("Got bitcoin price: " + resp.data.data.amount);
+      rbState.userData.bitcoinPrice = parseFloat(resp.data.data.amount);
+    });
+  }
+
+  root.getUserData = function (cb /* (err, userData) */) {
+    getPrice();
     loadStoredStateThen(function () {
-      cb(null, rbState.userData);
-      $http(_get('/sso/v1/account')).then(function(resp) {
+      $http(_get('/sso/v1/account')).then(function (resp) {
         if (!resp.data) {
           return cb("No data returned");
         }
-        rbState.userData = resp.data;
+        Object.assign(rbState.userData, resp.data);
         if (rbState.authData && ('address' in rbState.authData)) {
           rbState.userData.address = rbState.authData.address;
         }
@@ -128,7 +184,7 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
     });
   };
 
-  root.registerNextStep = function() {
+  root.registerNextStep = function () {
     nextStepsService.registerFirst({
       title: 'Link Bitovation Account',
       name: 'linkbitovation',
@@ -137,12 +193,12 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
     });
   };
 
-  root.clearNextStep = function() {
+  root.clearNextStep = function () {
     nextStepsService.unregister('linkbitovation');
   };
 
-  root.needAddress = function(cb /* bool needsAddress */) {
-    loadStoredStateThen(function() {
+  root.needAddress = function (cb /* bool needsAddress */) {
+    loadStoredStateThen(function () {
       if ('authData' in rbState) {
         if (!('token' in rbState.authData)) {
           return cb(false);
@@ -155,20 +211,20 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
     });
   };
 
-  root.submitAddress = function(addr, cb /* err */) {
-    $http(_post_auth('/sso/v1/address', {address:addr})).then(function(data) {
+  root.submitAddress = function (addr, cb /* err */) {
+    $http(_post_auth('/sso/v1/address', {address: addr})).then(function (data) {
       rbState.authData.address = addr;
       rbState.userData.address = addr;
       saveState(function (err) {
         if (err) return cb(err);
         cb(null);
       });
-    }, function(data) {
+    }, function (data) {
       return cb('RetailBenefits submitAddress ERROR: ' + data.statusText);
     });
   };
 
-  root.registerAddressStep = function() {
+  root.registerAddressStep = function () {
     nextStepsService.registerFirst({
       title: 'Submit Reward Address',
       name: 'rewardaddress',
@@ -177,15 +233,15 @@ angular.module('copayApp.services').factory('retailBenefitsService', function($h
     });
   };
 
-  root.clearAddressStep = function (){
+  root.clearAddressStep = function () {
     nextStepsService.unregister('rewardaddress');
   };
 
-  root.logout = function(cb) {
-    storageService.setRetailBenefitsState({}, function() {
+  root.logout = function (cb) {
+    storageService.setRetailBenefitsState({}, function () {
       storageService.removeRetailBenefitsState(cb);
       root.clearAddressStep();
-      rbState = {};
+      clearRBState();
     });
   };
 

@@ -109,23 +109,33 @@
     <div class="list card" ng-if="rbUserDataLoaded()">
       <div class="item item-icon-right item-heading">
         <span translate>Bitovation Shop</span>
-        <i class="icon big-icon-svg">
-          <img src="img/logout.png" class="logout-button" ng-click="logoutRB()"/>
+        <i class="shop-button icon big-icon-svg" ng-click="visitShop()">
+          shop now
+          <img src="img/icon-cart.svg" />
         </i>
       </div>
       <table class="rb-card-table">
-        <tr class="rb-credits">
-          <td>{{rbUserData.cashback.pending}}</td>
-          <td>{{rbUserData.cashback.total}}</td>
-          <td>{{rbUserData.cashback.paid}}</td>
+
+        <tr class="rb-credits" ng-if="rbUserData.bitcoinPrice">
+          <td>{{rbUserData.cashback.pending/rbUserData.bitcoinPrice}}</td>
+          <td>{{rbUserData.cashback.total/rbUserData.bitcoinPrice}}</td>
+          <td>{{rbUserData.cashback.paid/rbUserData.bitcoinPrice}}</td>
+        </tr>
+        <tr class="rb-credits" ng-if="!rbUserData.bitcoinPrice">
+          <td>...</td>
+          <td>...</td>
+          <td>...</td>
         </tr>
         <tr class="rb-titles">
-          <td>Pending<br>Bitcredits</td>
-          <td>Available<br>Bitcredits</td>
-          <td>Lifetime<br>Bitcredits</td>
+          <td>Pending<br>Bits</td>
+          <td>Available<br>Bits</td>
+          <td>Lifetime<br>Bits</td>
         </tr>
         <tr ng-if="rbUserData.address" class="rb-address">
-          <td colspan="3">PAYOUT ADDRESS {{rbUserData.address}}</td>
+          <td colspan="3">Payout Address: {{rbUserData.address}}</td>
+        </tr>
+        <tr ng-if="!rbUserData.address" class="rb-address">
+          <td colspan="3">Payout Address: please submit below</td>
         </tr>
       </table>
     </div>
