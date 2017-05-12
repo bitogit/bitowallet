@@ -116,15 +116,10 @@
       </div>
       <table class="rb-card-table">
 
-        <tr class="rb-credits" ng-if="rbUserData.bitcoinPrice">
-          <td>{{rbUserData.cashback.pending/rbUserData.bitcoinPrice}}</td>
-          <td>{{rbUserData.cashback.total/rbUserData.bitcoinPrice}}</td>
-          <td>{{rbUserData.cashback.paid/rbUserData.bitcoinPrice}}</td>
-        </tr>
-        <tr class="rb-credits" ng-if="!rbUserData.bitcoinPrice">
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
+        <tr class="rb-credits">
+          <td>{{rbUserData.cashback.bits_paid}}</td>
+          <td>{{rbUserData.cashback.bits_total}}</td>
+          <td>{{rbUserData.cashback.bits_pending}}</td>
         </tr>
         <tr class="rb-titles">
           <td>Pending<br>Bits</td>

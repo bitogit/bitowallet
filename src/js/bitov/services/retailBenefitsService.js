@@ -143,34 +143,13 @@ angular.module('copayApp.services').factory('retailBenefitsService', function ($
     });
   };
 
-  function getPrice () {
-    $http({
-      method: 'GET',
-      url: 'https://api.coinbase.com/v2/prices/spot?currency=USD',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'CB-VERSION': '2017-05-08'
-      }
-    }).then(function (resp) {
-      if (!resp.data) {
-        $log.error("No data returned");
-        return;
-      }
-
-      $log.info("Got bitcoin price: " + resp.data.data.amount);
-      rbState.userData.bitcoinPrice = parseFloat(resp.data.data.amount);
-    });
-  }
-
   root.getUserData = function (cb /* (err, userData) */) {
-    getPrice();
     loadStoredStateThen(function () {
       $http(_get('/sso/v1/account')).then(function (resp) {
         if (!resp.data) {
           return cb("No data returned");
         }
-        Object.assign(rbState.userData, resp.data);
+        Object.assign(rbState.userData, resp.data.data);
         if (rbState.authData && ('address' in rbState.authData)) {
           rbState.userData.address = rbState.authData.address;
         }
