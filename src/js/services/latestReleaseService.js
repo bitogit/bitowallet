@@ -5,6 +5,8 @@ angular.module('copayApp.services')
     var root = {};
 
     root.checkLatestRelease = function(cb) {
+      // Disable update checking because bitov is a private fork
+      return cb(null, false);
       var releaseURL = configService.getDefaults().release.url;
 
       requestLatestRelease(releaseURL, function(err, release) {
