@@ -86,6 +86,7 @@ angular.module('copayApp.services').factory('openURLService', function($rootScop
         navigator.registerProtocolHandler('bitcoin', url, 'Copay Bitcoin Handler');
         navigator.registerProtocolHandler('web+copay', url, 'Copay Wallet Handler');
         navigator.registerProtocolHandler('web+bitpay', url, 'Bitpay Wallet Handler');
+        navigator.registerProtocolHandler('web+bitov', url, 'Bitov Wallet Handler');
       }
     }
   };

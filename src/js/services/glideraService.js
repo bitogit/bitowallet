@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('copayApp.services').factory('glideraService', function($http, $log, $window, $filter, platformInfo, storageService, buyAndSellService, lodash, configService, txFormatService) {
+angular.module('copayApp.services').factory('glideraService', function($http, $log, $window, $filter, platformInfo, storageService, buyAndSellService, lodash, configService, txFormatService, appConfigService) {
   var root = {};
   var credentials = {};
   var isCordova = platformInfo.isCordova;
@@ -440,6 +440,7 @@ angular.module('copayApp.services').factory('glideraService', function($http, $l
   };
 
   var register = function() {
+    if (!appConfigService._enabledExtensions.glidera) return false;
     if (isWindowsPhoneApp) return;
 
     storageService.getGlideraToken(credentials.NETWORK, function(err, token) {
