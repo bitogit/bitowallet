@@ -14,10 +14,10 @@
   "gitHubRepoUrl": "git://github.com/sdobz/bitov.git",
   "gitHubRepoBugs": "https://github.com/sdobz/bitov/issues",
   "disclaimerUrl": "http://wallet.bitovation.com/wallet-terms/",
-  "url": "https://wallet.wallet.bitovation.com",
+  "url": "http://wallet.bitovation.com",
   "download": {
     "bitov": {
-      "url": "https://wallet.bitovation.com/wallet"
+      "url": "http//wallet.bitovation.com/wallet"
     }
   },
   "rateApp": {
@@ -30,7 +30,7 @@
   "release": {
     "url": "https://api.github.com/repos/sdobz/bitov/releases/latest"
   },
-  "shopUrl": "https://wallet.bitovation.com/",
+  "shopUrl": "http://wallet.bitovation.com/",
   "supportUrl": "http://wallet.bitovation.com/wallet-support/",
   "appDescription": "Bitovation Bitcoin Wallet",
   "winAppName": "BitovationWallet",
