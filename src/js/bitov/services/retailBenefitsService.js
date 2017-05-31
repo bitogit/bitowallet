@@ -157,8 +157,18 @@ angular.module('copayApp.services').factory('retailBenefitsService', function ($
           if (err) return cb(err);
           cb(err, rbState.userData);
         });
-      }, function(data) {
-        return cb('RetailBenefits getUserData ERROR: ' + data.statusText);
+      }, function(resp) {
+        // Permission denied, clear user data
+        if (resp.status === 403) {
+          rbState.authData = {};
+          saveState(function (err) {
+            if (err) return cb(err);
+            cb('RetailBenefits getUserData ERROR: ' + data.statusText);
+          });
+        }
+        else {
+          return cb('RetailBenefits getUserData ERROR: ' + data.statusText);
+        }
       });
     });
   };

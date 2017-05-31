@@ -457,13 +457,13 @@ angular.module('copayApp.services').factory('walletService', function($log, $tim
           // do not sync all history, just looking for a single TX.
           if (opts.limitTx) {
 
-            foundLimitTx = lodash.find(newTxs, {
+            foundLimitTx = lodash.find(txsFromLocal, {
               txid: opts.limitTx,
             });
 
             if (foundLimitTx) {
               $log.debug('Found limitTX: ' + opts.limitTx);
-              return next(null, newTxs);
+              return next(null, [foundLimitTx]);
             }
           }
           // </HACK>
@@ -763,11 +763,13 @@ angular.module('copayApp.services').factory('walletService', function($log, $tim
     };
 
     // Update this JIC.
-    var config = configService.getSync().wallet.settings;
+    var config = configService.getSync();
+    var walletSettings = config.wallet.settings;
 
     //prefs.email  (may come from arguments)
+    prefs.email = config.emailNotifications.email;
     prefs.language = uxLanguage.getCurrentLanguage();
-    prefs.unit = config.unitCode;
+    prefs.unit = walletSettings.unitCode;
 
     updateRemotePreferencesFor(lodash.clone(clients), prefs, function(err) {
       if (err) return cb(err);

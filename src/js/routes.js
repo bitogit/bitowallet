@@ -323,7 +323,8 @@ angular.module('copayApp').config(function(historicLogProvider, $provide, $logPr
         url: '/join/:url',
         views: {
           'tab-home@tabs': {
-            templateUrl: 'views/join.html'
+            templateUrl: 'views/join.html',
+            controller: 'joinController'
           },
         }
       })
@@ -340,7 +341,8 @@ angular.module('copayApp').config(function(historicLogProvider, $provide, $logPr
         url: '/create-personal',
         views: {
           'tab-home@tabs': {
-            templateUrl: 'views/tab-create-personal.html'
+            templateUrl: 'views/tab-create-personal.html',
+            controller: 'createController'
           },
         }
       })
@@ -348,7 +350,8 @@ angular.module('copayApp').config(function(historicLogProvider, $provide, $logPr
         url: '/create-shared',
         views: {
           'tab-home@tabs': {
-            templateUrl: 'views/tab-create-shared.html'
+            templateUrl: 'views/tab-create-shared.html',
+            controller: 'createController'
           },
         }
       })
@@ -656,8 +659,17 @@ angular.module('copayApp').config(function(historicLogProvider, $provide, $logPr
        *
        */
 
-      .state('tabs.receive.amount', {
-        url: '/amount/:walletId/:customAmount/:toAddress',
+      .state('tabs.paymentRequest', {
+        url: '/payment-request',
+        abstract: true,
+        params: {
+          id: null,
+          nextStep: 'tabs.paymentRequest.confirm'
+        }
+      })
+
+      .state('tabs.paymentRequest.amount', {
+        url: '/amount',
         views: {
           'tab-receive@tabs': {
             controller: 'amountController',
@@ -665,8 +677,8 @@ angular.module('copayApp').config(function(historicLogProvider, $provide, $logPr
           }
         }
       })
-      .state('tabs.receive.customAmount', {
-        url: '/customAmount/:walletId/:toAmount/:toAddress',
+      .state('tabs.paymentRequest.confirm', {
+        url: '/confirm/:amount/:currency',
         views: {
           'tab-receive@tabs': {
             controller: 'customAmountController',
@@ -1111,7 +1123,7 @@ angular.module('copayApp').config(function(historicLogProvider, $provide, $logPr
         }
       });
   })
-  .run(function($rootScope, $state, $location, $log, $timeout, startupService, fingerprintService, $ionicHistory, $ionicPlatform, $window, appConfigService, lodash, platformInfo, profileService, uxLanguage, gettextCatalog, openURLService, storageService, scannerService, configService, /* plugins START HERE => */ coinbaseService, glideraService, amazonService, bitpayCardService, applicationService) {
+  .run(function($rootScope, $state, $location, $log, $timeout, startupService, fingerprintService, $ionicHistory, $ionicPlatform, $window, appConfigService, lodash, platformInfo, profileService, uxLanguage, gettextCatalog, openURLService, storageService, scannerService, configService, emailService, /* plugins START HERE => */ coinbaseService, glideraService, amazonService, bitpayCardService, applicationService) {
 
     uxLanguage.init();
 
@@ -1224,8 +1236,9 @@ angular.module('copayApp').config(function(historicLogProvider, $provide, $logPr
             applicationService.appLockModal('check');
           });
         };
-        // After everything have been loaded, initialize handler URL
+        // After everything have been loaded
         $timeout(function() {
+          emailService.init(); // Update email subscription if necessary
           openURLService.init();
         }, 1000);
       });
