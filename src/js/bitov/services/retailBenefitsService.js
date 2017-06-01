@@ -163,11 +163,10 @@ angular.module('copayApp.services').factory('retailBenefitsService', function ($
           rbState.authData = {};
           saveState(function (err) {
             if (err) return cb(err);
-            cb('RetailBenefits getUserData ERROR: ' + data.statusText);
           });
         }
         else {
-          return cb('RetailBenefits getUserData ERROR: ' + data.statusText);
+          return cb('RetailBenefits getUserData ERROR: ' + resp.statusText);
         }
       });
     });
