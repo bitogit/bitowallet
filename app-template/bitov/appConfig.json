@@ -13,8 +13,8 @@
   "gitHubRepoName": "copay",
   "gitHubRepoUrl": "git://github.com/sdobz/bitov.git",
   "gitHubRepoBugs": "https://github.com/sdobz/bitov/issues",
-  "disclaimerUrl": "http://wallet.bitovation.com/wallet-terms/",
-  "url": "http://wallet.bitovation.com",
+  "disclaimerUrl": "https://wallet.bitovation.com/wallet-terms/",
+  "url": "https://wallet.bitovation.com",
   "download": {
     "bitov": {
       "url": "http//wallet.bitovation.com/wallet"
@@ -22,7 +22,7 @@
   },
   "rateApp": {
     "bitov": {
-      "ios": "http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?id=951330296&pageNumber=0&sortOrdering=2&type=Purple+Software&mt=8",
+      "ios": "https://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?id=951330296&pageNumber=0&sortOrdering=2&type=Purple+Software&mt=8",
       "android": "https://play.google.com/store/apps/details?id=com.bitpay.copay",
       "wp": ""
     }
@@ -30,8 +30,8 @@
   "release": {
     "url": "https://api.github.com/repos/sdobz/bitov/releases/latest"
   },
-  "shopUrl": "http://wallet.bitovation.com/",
-  "supportUrl": "http://wallet.bitovation.com/wallet-support/",
+  "shopUrl": "https://wallet.bitovation.com/",
+  "supportUrl": "https://wallet.bitovation.com/wallet-support/",
   "appDescription": "Bitovation Bitcoin Wallet",
   "winAppName": "BitovationWallet",
   "wpPublisherId": "{31cdd08b-457c-413d-b440-f6665eec847d}",
@@ -39,8 +39,8 @@
   "windowsAppId": "804636ee-b017-4cad-8719-e58ac97ffa5c",
   "pushSenderId": "1036948132229",
   "description": "A Secure Bitcoin Wallet",
-  "version": "3.2.0",
-  "androidVersion": "320000",
+  "version": "3.2.1",
+  "androidVersion": "321000",
   "_extraCSS": null,
   "_enabledExtensions": {
     "coinbase": true,

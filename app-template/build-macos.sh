@@ -78,11 +78,11 @@ then
   # not need for 'out of app store' distribution (?)
 #  export PARENT_PLIST=parent.plist
 #  export CHILD_PLIST=child.plist
-  export APP_PATH=${STAGING_DIR}/${APP_NAME}.app
+  export APP_PATH="${STAGING_DIR}/${APP_NAME}.app"
 
-  codesign --deep -s "${IDENTITY}"  $APP_PATH"/Contents/Versions/52.0.2743.82/nwjs Helper.app" && echo "Sign 1"
-  codesign --deep -s "${IDENTITY}"  $APP_PATH"/Contents/Versions/52.0.2743.82/nwjs Framework.framework/Resources/app_mode_loader.app" && echo "Sign 2"
-  codesign --deep -s "${IDENTITY}"  $APP_PATH && echo "Sign 3"
+  codesign --deep -s "${IDENTITY}"  "$APP_PATH/Contents/Versions/55.0.2883.87/nwjs Helper.app" && echo "Sign 1"
+  codesign --deep -s "${IDENTITY}"  "$APP_PATH/Contents/Versions/55.0.2883.87/nwjs Framework.framework/Resources/app_mode_loader.app" && echo "Sign 2"
+  codesign --deep -s "${IDENTITY}"  "$APP_PATH" && echo "Sign 3"
   echo "Signing Done"
 
 fi
